@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🍓 Strawberry World — Berry Adventure</title>
+
+<style>
+:root{--pink:#ff5f97;--red:#e83e67;--green:#67b85b;--cream:#fff8ed;--ink:#433544;--blue:#75c8ec;--gold:#f4b942}
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:system-ui,Segoe UI,sans-serif;color:var(--ink);background:#dff3d7}
+body{overflow-x:hidden}button{font:inherit;border:0;cursor:pointer}
+.app{width:100%;min-height:100%;background:linear-gradient(#fff8fc,#eaf8df);padding-bottom:65px}
+header{height:58px;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;background:#ffffffee;backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;border-bottom:1px solid #eadde4}
+.logo{font-size:21px;font-weight:900;color:var(--red)}.logo span{color:#64a45c}.coins{background:#fff;border:2px solid #ffe1a8;border-radius:20px;padding:6px 12px;font-weight:900}
+main{padding:12px 14px}.screen{display:none}.screen.active{display:block}.home-width{max-width:1100px;margin:auto}
+.card{background:#fffdfb;border:1px solid #f0e3e9;border-radius:20px;padding:13px;box-shadow:0 5px 18px #74506912;margin-bottom:11px}
+.bottom{position:fixed;bottom:0;left:0;width:100%;display:grid;grid-template-columns:repeat(5,1fr);background:#fffffff2;border-top:1px solid #e8dbe2;z-index:50;padding:5px 8px calc(5px + env(safe-area-inset-bottom));backdrop-filter:blur(10px)}
+.nav{background:none;color:#927d8c;font-size:11px;font-weight:800;padding:4px}.nav span{display:block;font-size:21px}.nav.active{color:var(--red)}
+.hero{max-width:900px;margin:auto;min-height:280px;border-radius:25px;background:linear-gradient(#bce8fa 0 55%,#9bd47f 55%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#berryCanvas{width:190px;height:220px}.bubble{position:absolute;top:15px;left:50%;transform:translateX(-50%);background:#fff;padding:8px 13px;border-radius:17px;font-weight:800;font-size:13px;z-index:2;white-space:nowrap;box-shadow:0 6px 18px #53354a22}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.stat{background:#fff;border-radius:15px;padding:8px}.statline{font-size:11px;font-weight:800;display:flex;justify-content:space-between}.bar{height:8px;background:#eee;border-radius:20px;margin-top:4px;overflow:hidden}.fill{height:100%;border-radius:20px}.hunger{background:#ff9b62}.happy{background:#ff6fa5}.energy{background:#7cb8ef}.clean{background:#67d0ba}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.action{background:#fff;border:2px solid #ffe1eb;border-radius:15px;padding:9px;font-weight:800;font-size:12px}.emoji{font-size:23px;display:block}
+.section-title{font-weight:900;display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.pill{background:#ffe0eb;border-radius:20px;padding:4px 8px;font-size:11px}
+.map-wrap{width:100%;overflow:hidden;border-radius:25px;background:#8ed3ee;box-shadow:0 8px 30px #47705b33}.map-wrap canvas{display:block;width:100%;height:auto;touch-action:none}
+.map-help{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}.map-help span{font-size:12px;font-weight:700}.primary{background:var(--red);color:#fff;border-radius:13px;padding:8px 12px;font-weight:900}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}.legend button{background:#fff;border:1px solid #ebdfe5;border-radius:13px;padding:7px 4px;font-size:11px;font-weight:800}.legend b{display:block;font-size:21px}
+.modal{position:fixed;inset:0;background:#382b4899;display:none;align-items:center;justify-content:center;z-index:100;padding:10px}.modal.show{display:flex}.modalbox{width:min(1150px,98vw);max-height:96vh;overflow:auto;background:#fff9f0;border-radius:25px;padding:14px;box-shadow:0 20px 60px #0004}.close{float:right;width:38px;height:38px;border-radius:50%;background:#eee;font-size:22px}.game-head{display:flex;align-items:center;justify-content:space-between;padding-right:45px}.game-stage{position:relative;width:100%;background:#9ddcf4;border-radius:18px;overflow:hidden}.game-stage canvas{display:block;width:100%;height:auto;touch-action:none}.game-hud{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.tag{background:#fff;border-radius:14px;padding:6px 9px;font-size:12px;font-weight:900;border:1px solid #eadfe5}.controls{display:flex;justify-content:center;gap:9px;margin-top:8px}.ctrl{min-width:58px;height:48px;border-radius:15px;background:#fff;border:2px solid #eadce4;font-size:22px;font-weight:900;touch-action:none;user-select:none}.ctrl:active{transform:translateY(2px);background:#ffeaf1}
+.quiz{padding:16px;text-align:center}.question{font-size:20px;font-weight:900;margin:12px 0}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.answer{background:#fff;border:2px solid #eadfe7;border-radius:14px;padding:12px;font-weight:800}.recipe{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.ingredient{background:#fff;border:2px solid #eadfe7;border-radius:15px;padding:12px;text-align:center;font-size:26px}.ingredient small{display:block;font-size:11px;font-weight:800}.ingredient.selected{border-color:var(--red);background:#fff0f5}
+.progress{height:10px;background:#eee;border-radius:20px;overflow:hidden}.progress div{height:100%;background:linear-gradient(90deg,#ff6fa5,#a782e8);width:0}
+.toast{position:fixed;top:70px;left:50%;transform:translate(-50%,-8px);opacity:0;background:#4e3b4d;color:#fff;padding:10px 15px;border-radius:15px;z-index:200;font-weight:800;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+.shopgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.item{background:#fff;border-radius:16px;padding:11px;text-align:center;border:1px solid #eadfe5}.item .big{font-size:36px}.item button{background:var(--green);border-radius:10px;padding:6px 9px;font-weight:900}.item button:disabled{background:#ddd}
+.game-over{padding:25px;text-align:center}.game-over .big{font-size:72px}.reward{font-size:15px;font-weight:900}
+@media(max-width:700px) and (orientation:portrait){.landscape-warning{display:flex!important}.stats{grid-template-columns:1fr 1fr}.legend{grid-template-columns:repeat(3,1fr)}.recipe{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(2,1fr)}}
+.landscape-warning{display:none;position:fixed;inset:0;background:#4e3b4d;z-index:500;color:#fff;align-items:center;justify-content:center;text-align:center;padding:30px;font-weight:900;font-size:20px}
+@media(min-width:900px){main{padding:16px 24px}.hero{min-height:330px}.modalbox{padding:18px}}
+</style>
+
+<style id="accessory-progression-css">
+/* Realistic-ish character accessories: layered over the Berry avatar */
+.avatar-accessory { position:absolute; pointer-events:none; z-index:8; }
+.char-wrap { position:relative; display:inline-block; }
+.char-wrap .char-body { position:relative; z-index:2; }
+.char-wrap .accessory-layer { position:absolute; inset:0; z-index:5; pointer-events:none; }
+.accessory-badge { display:inline-flex; align-items:center; gap:6px; }
+.shop-locked { opacity:.55; filter:grayscale(.25); }
+.shop-owned { outline:2px solid #86efac; }
+.point-pill { font-weight:900; color:#7c2d12; background:#fef3c7; border:2px solid #f59e0b; padding:5px 10px; border-radius:999px; }
+</style>
+
+
+<style id="berry-character-animation-v3">
+/* === BERRY CHARACTER ANIMATION === */
+.berry-character, .char-wrap {
+  transform-origin: 50% 85%;
+  will-change: transform, filter;
+}
+.berry-character.berry-walk, .char-wrap.berry-walk {
+  animation: berryWalk .30s ease-in-out infinite alternate;
+}
+.berry-character.berry-jump, .char-wrap.berry-jump {
+  animation: berryJump .58s cubic-bezier(.2,.75,.25,1) both;
+}
+.berry-character.berry-hit, .char-wrap.berry-hit {
+  animation: berryHit .52s ease-out both;
+}
+.berry-character.berry-land, .char-wrap.berry-land {
+  animation: berryLand .25s ease-out both;
+}
+.berry-character.berry-use, .char-wrap.berry-use {
+  animation: berryUse .70s cubic-bezier(.2,.8,.25,1) both;
+}
+.berry-character.berry-win, .char-wrap.berry-win {
+  animation: berryWin .85s ease-in-out both;
+}
+.berry-character.berry-idle, .char-wrap.berry-idle {
+  animation: berryIdle 2.8s ease-in-out infinite;
+}
+.berry-character .accessory-layer, .char-wrap .accessory-layer {
+  transform-origin: 50% 50%;
+}
+.berry-character.berry-walk .accessory-layer,
+.char-wrap.berry-walk .accessory-layer {
+  animation: accessoryWalk .30s ease-in-out infinite alternate;
+}
+.berry-character.berry-jump .accessory-layer,
+.char-wrap.berry-jump .accessory-layer {
+  animation: accessoryJump .58s ease-out both;
+}
+.berry-character.berry-use .accessory-layer,
+.char-wrap.berry-use .accessory-layer {
+  animation: accessoryUse .70s ease-in-out both;
+}
+.berry-character.berry-hit::after, .char-wrap.berry-hit::after {
+  content:"";
+  position:absolute;
+  inset:-12px;
+  border-radius:50%;
+  background:rgba(239,68,68,.18);
+  pointer-events:none;
+  animation: hitFlash .52s ease-out both;
+  z-index:20;
+}
+.berry-foot-dust {
+  position:absolute;
+  width:9px;height:5px;
+  border-radius:50%;
+  background:rgba(120,53,15,.25);
+  bottom:-3px;
+  animation:dustPop .32s ease-out both;
+  pointer-events:none;
+  z-index:1;
+}
+.berry-use-spark {
+  position:absolute;
+  left:50%; top:28%;
+  transform:translate(-50%,-50%);
+  font-size:24px;
+  pointer-events:none;
+  z-index:30;
+  animation:useSpark .70s ease-out both;
+}
+@keyframes berryIdle {
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-2px) rotate(.5deg)}
+}
+@keyframes berryWalk {
+  0%{transform:translateY(0) rotate(-2deg) scaleX(.98)}
+  50%{transform:translateY(-3px) rotate(2deg) scaleX(1)}
+  100%{transform:translateY(0) rotate(-1deg) scaleX(.98)}
+}
+@keyframes berryJump {
+  0%{transform:translateY(0) scaleX(1) scaleY(1)}
+  12%{transform:translateY(4px) scaleX(1.08) scaleY(.90)}
+  50%{transform:translateY(-25px) scaleX(.94) scaleY(1.08)}
+  82%{transform:translateY(-9px) scaleX(.98) scaleY(1.02)}
+  100%{transform:translateY(0) scaleX(1) scaleY(1)}
+}
+@keyframes berryLand {
+  0%{transform:translateY(-4px) scaleX(.94) scaleY(1.07)}
+  55%{transform:translateY(2px) scaleX(1.10) scaleY(.86)}
+  100%{transform:translateY(0) scaleX(1) scaleY(1)}
+}
+@keyframes berryHit {
+  0%{transform:translateX(0) rotate(0) scale(1)}
+  15%{transform:translateX(-7px) rotate(-7deg) scale(.97)}
+  30%{transform:translateX(8px) rotate(7deg) scale(1.02)}
+  48%{transform:translateX(-6px) rotate(-5deg)}
+  66%{transform:translateX(5px) rotate(4deg)}
+  100%{transform:translateX(0) rotate(0) scale(1)}
+}
+@keyframes berryUse {
+  0%{transform:scale(1) rotate(0)}
+  20%{transform:scale(.94,.96) rotate(-3deg)}
+  45%{transform:scale(1.08,1.04) rotate(3deg)}
+  70%{transform:scale(1.02) rotate(-1deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+@keyframes berryWin {
+  0%{transform:translateY(0) rotate(0) scale(1)}
+  25%{transform:translateY(-9px) rotate(-5deg) scale(1.04)}
+  50%{transform:translateY(0) rotate(5deg) scale(1.08)}
+  75%{transform:translateY(-6px) rotate(-3deg) scale(1.03)}
+  100%{transform:translateY(0) rotate(0) scale(1)}
+}
+@keyframes accessoryWalk {
+  0%{transform:translateX(-1px) rotate(-2deg)}
+  100%{transform:translateX(1px) rotate(2deg)}
+}
+@keyframes accessoryJump {
+  0%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-7px) rotate(-4deg)}
+  100%{transform:translateY(0) rotate(0)}
+}
+@keyframes accessoryUse {
+  0%{transform:scale(.85) rotate(-8deg)}
+  50%{transform:scale(1.25) rotate(8deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+@keyframes hitFlash {
+  0%,100%{opacity:0}
+  20%{opacity:1}
+  50%{opacity:.15}
+}
+@keyframes dustPop {
+  from{transform:scale(.5);opacity:.2}
+  to{transform:translateX(8px) scale(1.6);opacity:0}
+}
+@keyframes useSpark {
+  0%{opacity:0;transform:translate(-50%,-20%) scale(.5)}
+  25%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-80%) scale(1.4)}
+}
+@media (prefers-reduced-motion:reduce){
+  .berry-character,.char-wrap,.berry-character *,.char-wrap *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+</style>
+
+</head>
+<body>
+<div class="landscape-warning">📱 Putar perangkat ke <b style="margin:0 6px">LANDSCAPE</b> untuk pengalaman petualangan terbaik 🍓<br><small style="font-size:13px;font-weight:600">Game tetap dapat dimainkan di layar kecil.</small></div>
+<div class="app">
+<header><div class="logo">🍓 Strawberry <span>World</span></div><div class="coins">🪙 <span id="coins">100</span></div></header>
+<main>
+<section id="home" class="screen active">
+<div class="home-width">
+<div class="hero"><div class="bubble" id="bubble">Hai! Aku Berry 🍓 Ayo menjelajah!</div><canvas id="berryCanvas" width="190" height="220"></canvas></div>
+<div class="card" style="margin-top:10px"><div class="section-title"><span>🍓 Berry</span><span class="pill">Level <b id="level">1</b> • <b id="xp">0</b>/100 XP</span></div><div class="progress"><div id="xpfill"></div></div><div class="stats" style="margin-top:10px">
+<div class="stat"><div class="statline"><span>🍴 Lapar</span><span id="vh">80</span></div><div class="bar"><div class="fill hunger" id="bh"></div></div></div>
+<div class="stat"><div class="statline"><span>💖 Bahagia</span><span id="vha">85</span></div><div class="bar"><div class="fill happy" id="bha"></div></div></div>
+<div class="stat"><div class="statline"><span>⚡ Energi</span><span id="ve">80</span></div><div class="bar"><div class="fill energy" id="be"></div></div></div>
+<div class="stat"><div class="statline"><span>🫧 Bersih</span><span id="vc">75</span></div><div class="bar"><div class="fill clean" id="bc"></div></div></div>
+</div></div>
+<div class="actions"><button class="action" onclick="act('feed')"><span class="emoji">🍓</span>Makan</button><button class="action" onclick="act('bath')"><span class="emoji">🫧</span>Mandi</button><button class="action" onclick="act('play')"><span class="emoji">🎮</span>Main</button><button class="action" onclick="act('sleep')"><span class="emoji">😴</span>Tidur</button></div>
+</div></section>
+
+<section id="map" class="screen">
+<div class="section-title"><span>🏝️ Berry Island Adventure</span><span class="pill">5 Pos Edukasi</span></div>
+<div class="map-wrap"><canvas id="islandCanvas" width="1400" height="700" tabindex="0" aria-label="Peta Berry Island. Klik salah satu pos untuk bermain."></canvas></div>
+<div class="map-help"><span>🧭 Klik pos mana saja untuk bermain. Tidak perlu menyelesaikan game sebelumnya!</span><button class="primary" onclick="startAdventure(0)">▶ Mulai Petualangan</button></div>
+<div class="legend">
+<button onclick="startAdventure(0)"><b>🌱</b>Pertumbuhan</button>
+<button onclick="startAdventure(1)"><b>🌀</b>Maze</button>
+<button onclick="startAdventure(2)"><b>🧩</b>Puzzle</button>
+<button onclick="startAdventure(3)"><b>🔢</b>Berhitung</button>
+<button onclick="startAdventure(4)"><b>🍦</b>Ice Cream</button>
+</div>
+<div class="card" style="margin-top:11px"><b>📚 Dunia Stroberi</b><p style="font-size:13px;margin-bottom:0">Berry Island menggabungkan petualangan dan pengetahuan: kenali tahapan pertumbuhan, manfaat stroberi, pola, berhitung, lalu praktik sederhana mengolah stroberi menjadi es krim.</p></div>
+</section>
+
+<section id="shop" class="screen">
+<div id="play-to-earn-panel" style="margin:18px 0;padding:16px;border-radius:20px;background:linear-gradient(135deg,#fff7ed,#fef3c7);border:2px solid #f59e0b;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div><h3 style="margin:0 0 4px">🎮 Main untuk Mendapatkan Aksesori</h3>
+    <div style="font-size:14px">Selesaikan permainan untuk mendapatkan poin. Poin dipakai membeli aksesori yang langsung dipasang pada Berry.</div></div>
+    <div class="point-pill">⭐ <span data-berry-points>0</span> poin</div>
+  </div>
+  <div data-accessory-shop style="display:flex;flex-wrap:wrap;gap:4px;margin-top:12px;"></div>
+</div>
+<div class="section-title">🛍️ Berry Shop</div><div class="shopgrid" id="shopgrid"></div></section>
+<section id="inventory" class="screen"><div class="section-title">🎒 Inventory</div><div class="card"><b>👕 Outfit</b><div id="inventoryItems" class="shopgrid" style="margin-top:10px"></div></div><div class="card"><b>🍓 Karakter Berry</b><p style="font-size:13px">Item yang dipakai langsung terlihat pada karakter. Berry juga akan menampilkan ekspresi sesuai aktivitasnya.</p><button class="primary" onclick="useEquipped()">✨ Pakai Item Terpilih</button></div><div class="card"><b>🏆 Petualangan</b><p id="wins">0 pos selesai</p></div></section>
+<section id="more" class="screen"><div class="section-title">✨ Berry Hub</div><div class="card"><button class="primary" onclick="daily()">🎁 Ambil Daily Reward +50</button></div><div class="card"><b>💡 Tip</b><p style="font-size:13px">Untuk gerakan paling realistis, gunakan tombol ← → untuk berjalan dan ↑/Space untuk melompat. Hindari rintangan dan kumpulkan stroberi!</p></div></section>
+</main>
+<nav class="bottom"><button class="nav active" onclick="show('home',this)"><span>🏠</span>Home</button><button class="nav" onclick="show('shop',this)"><span>🛍️</span>Shop</button><button class="nav" onclick="show('inventory',this)"><span>🎒</span>Inventory</button><button class="nav" onclick="show('map',this)"><span>🏝️</span>Map</button><button class="nav" onclick="show('more',this)"><span>✨</span>More</button></nav>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeGame()">×</button><div class="game-head"><h2 id="gameTitle" style="margin:4px 0">Adventure</h2></div><div id="gameContent"></div></div></div>
+<div class="toast" id="toast"></div>
+
+
+<script>
+'use strict';
+const SAVE='berryIslandRealV3';
+const $=id=>document.getElementById(id);
+let S=JSON.parse(localStorage.getItem(SAVE)||'null')||{
+ coins:100,level:1,xp:0,h:80,ha:85,e:80,c:75,wins:0,done:[false,false,false,false,false],
+ daily:null,high:0,outfit:'Berry Original',owned:['Berry Original'],expr:'happy'
+};
+const clamp=n=>Math.max(0,Math.min(100,n));
+function save(){localStorage.setItem(SAVE,JSON.stringify(S))}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),1800)}
+function gainXP(n){S.xp+=n;while(S.xp>=100){S.xp-=100;S.level++;S.coins+=30;toast('🌟 Level Up! Berry Level '+S.level)}render()}
+function render(){
+ $('coins').textContent=S.coins;$('level').textContent=S.level;$('xp').textContent=S.xp;$('xpfill').style.width=S.xp+'%';
+ $('vh').textContent=Math.round(S.h);$('vha').textContent=Math.round(S.ha);$('ve').textContent=Math.round(S.e);$('vc').textContent=Math.round(S.c);
+ $('bh').style.width=S.h+'%';$('bha').style.width=S.ha+'%';$('be').style.width=S.e+'%';$('bc').style.width=S.c+'%';
+ $('wins').textContent=S.wins+' pos selesai';if($('outfit'))$('outfit').textContent=S.outfit; renderInventory(); save();
+}
+function act(t){
+ if(t==='feed'){S.h=clamp(S.h+24);S.ha=clamp(S.ha+4);toast('🍓 Berry kenyang!')}
+ if(t==='bath'){S.c=100;S.ha=clamp(S.ha+7);toast('🫧 Bersih!')}
+ if(t==='play'){S.ha=100;S.e=clamp(S.e-12);toast('🎮 Seru!')}
+ if(t==='sleep'){S.e=100;S.h=clamp(S.h-8);toast('😴 Energi penuh!')}
+ gainXP(5)
+}
+function show(id,el){
+ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');
+ document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));el?.classList.add('active');
+ if(id==='map')drawIsland();
+ if(id==='shop')renderShop();
+ if(id==='inventory')renderInventory();
+ render();
+}
+function daily(){
+ let d=new Date().toDateString();if(S.daily===d)return toast('🎁 Sudah diambil hari ini');
+ S.daily=d;S.coins+=50;gainXP(15);toast('🎁 +50 Berry Coin!')
+}
+const stations=[
+ {name:'Kebun Pertumbuhan',icon:'🌱',x:190,y:260,color:'#6dbb65',desc:'Tanam, rawat, panen, dan jual stroberi'},
+ {name:'Maze Stroberi',icon:'🌀',x:470,y:430,color:'#a985d9',desc:'Platformer: lari, lompat, lawan hama'},
+ {name:'Puzzle Stroberi',icon:'🧩',x:760,y:210,color:'#f28aa9',desc:'Susun stroberi menjadi bentuk utuh'},
+ {name:'Lembah Hitung',icon:'🔢',x:1030,y:440,color:'#f0b85b',desc:'Kenali angka dan penjumlahan dengan stroberi'},
+ {name:'Dapur Ice Cream',icon:'🍦',x:1230,y:210,color:'#72aee8',desc:'Racik es krim stroberi'}
+];
+const ic=$('islandCanvas'),ix=ic.getContext('2d');
+function ensureMapState(){
+  if(!Array.isArray(S.done)) S.done=[];
+  for(let i=0;i<stations.length;i++) if(typeof S.done[i]!=='boolean') S.done[i]=false;
+}
+function drawIsland(){
+  ensureMapState();
+ ix.clearRect(0,0,1400,700);ix.fillStyle='#8ed8f2';ix.fillRect(0,0,1400,700);
+ for(let y=40;y<700;y+=65){ix.strokeStyle='#ffffff55';ix.lineWidth=3;for(let x=0;x<1400;x+=90){ix.beginPath();ix.arc(x,y,18,0,Math.PI);ix.stroke()}}
+ ix.fillStyle='#82c96f';ix.beginPath();ix.moveTo(65,220);ix.bezierCurveTo(140,80,420,80,520,145);ix.bezierCurveTo(650,40,930,80,1000,150);ix.bezierCurveTo(1150,75,1330,130,1350,270);ix.bezierCurveTo(1390,430,1240,570,1090,540);ix.bezierCurveTo(950,650,730,580,630,610);ix.bezierCurveTo(480,650,310,570,230,530);ix.bezierCurveTo(90,500,20,350,65,220);ix.fill();
+ ix.strokeStyle='#e9d39a';ix.lineWidth=22;ix.stroke();
+ ix.strokeStyle='#d5ad75';ix.lineWidth=18;ix.lineCap='round';ix.beginPath();ix.moveTo(190,260);ix.quadraticCurveTo(350,350,470,430);ix.quadraticCurveTo(600,500,760,210);ix.quadraticCurveTo(900,180,1030,440);ix.quadraticCurveTo(1150,420,1230,210);ix.stroke();
+ ix.strokeStyle='#fff1bd';ix.lineWidth=5;ix.stroke();
+ stations.forEach((s,i)=>{
+  const done=S.done[i];ix.fillStyle=done?'#ffe58b':s.color;ix.beginPath();ix.arc(s.x,s.y,70,0,Math.PI*2);ix.fill();
+  ix.strokeStyle='#fff';ix.lineWidth=6;ix.stroke();ix.font='54px sans-serif';ix.textAlign='center';ix.fillText(s.icon,s.x,s.y+18);
+  ix.fillStyle='#fff';ix.font='bold 20px system-ui';ix.fillText((i+1)+'. '+s.name,s.x,s.y+102);
+  ix.font='14px system-ui';ix.fillText(done?'✓ SELESAI':'Klik untuk bermain',s.x,s.y+123);
+ });
+ ix.font='bold 28px system-ui';ix.fillStyle='#fff';ix.fillText('🍓 BERRY ISLAND 🍓',700,650);
+}
+ic.addEventListener('pointerdown',e=>{
+ e.preventDefault();
+ const r=ic.getBoundingClientRect();
+ if(!r.width||!r.height)return;
+ const x=(e.clientX-r.left)*(ic.width/r.width),y=(e.clientY-r.top)*(ic.height/r.height);
+ const hit=stations.findIndex(s=>Math.hypot(x-s.x,y-s.y)<92);
+ if(hit>=0)startAdventure(hit);
+});
+window.addEventListener('resize',()=>{if(document.getElementById('map')?.classList.contains('active'))drawIsland()});
+let gameRAF=null,activeCleanup=null;
+function closeGame(){
+ $('modal').classList.remove('show');
+ if(gameRAF)cancelAnimationFrame(gameRAF);gameRAF=null;
+ if(activeCleanup)activeCleanup();activeCleanup=null;
+}
+function startAdventure(i){
+ ensureMapState();
+ if(!stations[i]) return;
+ if(activeCleanup) { activeCleanup(); activeCleanup=null; }
+ if(gameRAF) { cancelAnimationFrame(gameRAF); gameRAF=null; }
+ // Semua pos dapat dibuka kapan saja; pemain bebas memilih urutan.
+ S.expr='focused'; render();
+ $('modal').classList.add('show');$('gameTitle').textContent=stations[i].icon+' '+stations[i].name;
+ if(i===0)farmGame(i);
+ if(i===1)platformGame(i,'🌀 Maze Stroberi','maze');
+ if(i===2)puzzleGame(i);
+ if(i===3)platformGame(i,'🔢 Lembah Hitung','count');
+ if(i===4)iceCreamGame(i);
+}
+function complete(i,xp=30,coin=25){
+ ensureMapState();
+ if(!S.done[i]){S.done[i]=true;S.wins++;S.coins+=coin;gainXP(xp);toast('🏆 Pos selesai! +'+coin+' Coin +'+xp+' XP')}
+ else toast('✨ Pos ini sudah selesai!');
+ drawIsland();render();
+}
+
+/* REAL PLAYABLE PLATFORMER */
+function platformGame(index,title,mode){
+ const isCount=mode==='count';
+ const W=1100,H=520;
+ const target=isCount?7:6;
+ const colors=isCount?['#f0b85b','#e9a43b','#ffe6a6']:['#a985d9','#7957b0','#e9d9ff'];
+ $('gameContent').innerHTML=`
+ <div class="game-hud">
+  <span class="tag">🎯 ${isCount?'Kumpulkan '+target+' stroberi':'Kumpulkan 6 stroberi + bendera'}</span>
+  <span class="tag">❤️ Nyawa: <b id="gLives">3</b></span>
+  <span class="tag">🍓: <b id="gBerry">0</b>/${target}</span>
+  <span class="tag">🪙 Skor: <b id="gScore">0</b></span>
+  <span class="tag">🏁 Jarak: <b id="gDist">0</b>%</span>
+ </div>
+ <div class="game-stage"><canvas id="gameCanvas" width="${W}" height="${H}" aria-label="Game platformer Berry Island"></canvas></div>
+ <div class="controls">
+  <button class="ctrl" id="left" aria-label="Kiri">◀</button>
+  <button class="ctrl" id="jump" aria-label="Lompat">▲</button>
+  <button class="ctrl" id="right" aria-label="Kanan">▶</button>
+ </div>
+ <div class="card" style="margin-top:8px;font-size:12px"><b>🎮 Kontrol:</b> A/D atau ←/→ untuk bergerak, W/↑/Space untuk lompat. Kumpulkan buah, hindari 🐛, dan capai bendera. Ada checkpoint supaya gagal tidak terasa menyebalkan.</div>`;
+ const c=$('gameCanvas'),ctx=c.getContext('2d');
+ const keys={left:false,right:false}, player={x:70,y:390,w:38,h:46,vx:0,vy:0,on:false,spawnX:70,spawnY:390,inv:0};
+ let lives=3, berries=0, score=0, frame=0, done=false, checkpointX=70;
+ const platforms=[
+  {x:0,y:455,w:1100,h:65},{x:150,y:380,w:150,h:22},{x:370,y:315,w:145,h:22},
+  {x:575,y:395,w:160,h:22},{x:790,y:330,w:135,h:22},{x:965,y:265,w:105,h:22}
+ ];
+ const collectibles=[];
+ for(let i=0;i<target;i++){
+   const spots=[[185,335],[415,270],[610,350],[830,285],[1000,220],[705,350],[530,270]];
+   collectibles.push({x:spots[i][0],y:spots[i][1],r:14,taken:false,bob:i*.8})
+ }
+ const enemies=[
+  {x:280,y:417,w:38,h:38,vx:1.25,min:220,max:430},
+  {x:515,y:277,w:38,h:38,vx:-1,min:380,max:555},
+  {x:750,y:357,w:38,h:38,vx:1.35,min:580,max:900},
+  {x:920,y:292,w:38,h:38,vx:-1.15,min:780,max:1030}
+ ];
+ const flag={x:1025,y:210,w:28,h:55};
+ function hit(a,b){return a.x<a.x+a.w&&a.x+a.w>b.x&&a.y<a.y+a.h&&a.y+a.h>b.y}
+ function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+ function respawn(){
+   lives--; S.expr='surprised'; if(lives<=0){finish(false);return}
+   player.x=checkpointX;player.y=player.spawnY;player.vx=0;player.vy=0;player.inv=100;toast('💥 Kena hama! Checkpoint aman.');
+ }
+ function finish(win){
+   if(done)return;done=true;cleanup();
+   if(win){
+    S.expr='victory';
+    const bonus=mode==='count'?65:60;S.coins+=bonus;gainXP(55);S.high=Math.max(S.high,score);
+    // Tandai pos selesai SEGERA saat game benar-benar mencapai kondisi menang.
+    // Sebelumnya status baru dicatat setelah tombol "Lanjutkan" ditekan, sehingga
+    // jika modal ditutup/terputus, Map masih menganggap pos belum selesai.
+    complete(index,0,0);
+    drawIsland();
+    render();
+    $('gameContent').innerHTML=`<div class="game-over"><div class="big">🏆🍓</div><h2>${title} selesai!</h2><p class="reward">Skor ${score} • ${berries}/${target} stroberi • +${bonus} Coin • +55 XP</p><p>${isCount?'Hebat! Kamu menghitung sambil bergerak dan menghindari rintangan.':'Kamu berhasil melewati rintangan, mengumpulkan stroberi, dan mencapai bendera!'}</p><button class="primary" id="continueBtn">Kembali ke Map</button></div>`;
+    $('continueBtn').onclick=()=>{closeGame();show('map',document.querySelector('.nav:nth-child(4)'));drawIsland();render()}
+   }else{
+    S.expr='sad';
+    $('gameContent').innerHTML=`<div class="game-over"><div class="big">😵🍓</div><h2>Berry jatuh!</h2><p>Jangan menyerah. Kamu bisa mencoba lagi dari awal.</p><button class="primary" id="retryBtn">Coba Lagi</button></div>`;
+    $('retryBtn').onclick=()=>platformGame(index,title,mode);
+   }
+ }
+ function draw(){
+   ctx.clearRect(0,0,W,H);
+   const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#9de0f7');sky.addColorStop(1,'#dff7ff');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+   ctx.fillStyle='#fff8';for(let x=70;x<1100;x+=220){ctx.beginPath();ctx.arc(x,70+(x%3)*12,24,0,Math.PI*2);ctx.arc(x+30,70,31,0,Math.PI*2);ctx.fill()}
+   ctx.fillStyle=colors[0];platforms.forEach(p=>{ctx.fillStyle=colors[0];ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillStyle=colors[1];ctx.fillRect(p.x,p.y,p.w,7)});
+   collectibles.forEach(o=>{if(o.taken)return;ctx.font='30px sans-serif';ctx.textAlign='center';ctx.fillText('🍓',o.x,o.y+Math.sin(frame*.08+o.bob)*5)});
+   enemies.forEach(e=>{ctx.font='34px sans-serif';ctx.fillText('🐛',e.x+19,e.y+30)});
+   ctx.fillStyle='#fff';ctx.fillRect(flag.x,flag.y,5,flag.h);ctx.font='38px sans-serif';ctx.fillText('🚩',flag.x+18,flag.y+28);
+   ctx.save();ctx.globalAlpha=player.inv>0&&Math.floor(player.inv/6)%2===0?.35:1;drawBerryCharacter(ctx,player.x+19,player.y+23,0.48,S.expr,true);ctx.restore();
+ }
+ let mazePaused=false;
+ const strawberryQuestions=[
+  ['Bagian stroberi yang biasanya dimakan adalah…',['Akar','Buah','Batu','Daun'],'Buah'],
+  ['Warna stroberi matang yang paling umum adalah…',['Merah','Biru','Hitam','Ungu'],'Merah'],
+  ['Stroberi tumbuh baik jika mendapat…',['Cahaya matahari','Kegelapan total','Air garam','Es batu terus-menerus'],'Cahaya matahari'],
+  ['Apa yang perlu dilakukan pada tanaman agar tidak kekurangan air?',['Menyiram','Membakar','Menutup dengan pasir','Membekukan'],'Menyiram'],
+  ['Biji kecil di permukaan stroberi disebut…',['Achenes','Awan','Serbuk besi','Kerikil'],'Achenes'],
+  ['Stroberi termasuk kelompok tanaman…',['Buah semu','Padi','Jamur','Rumput laut'],'Buah semu']
+ ];
+ function showMazeQuestion(post){
+   mazePaused=true; S.expr='focused';
+   const q=strawberryQuestions[Math.floor(Math.random()*strawberryQuestions.length)];
+   const answers=[...q[1]].sort(()=>Math.random()-.5);
+   $('gameContent').insertAdjacentHTML('beforeend',`<div id="mazeQuiz" style="position:absolute;inset:0;background:#382b4899;display:flex;align-items:center;justify-content:center;padding:18px"><div class="quiz" style="width:min(650px,96%);border-radius:22px;background:#fff9f0"><div style="font-size:42px">🍓📚</div><b>POS ${post+1} — Soal Stroberi Acak</b><div class="question">${q[0]}</div><div class="answers">${answers.map(a=>`<button class="answer" data-a="${a}">${a}</button>`).join('')}</div><p style="font-size:12px">Soal akan diacak lagi setelah kehilangan HP.</p></div></div>`);
+   document.querySelectorAll('#mazeQuiz .answer').forEach(b=>b.onclick=()=>{
+     if(b.dataset.a===q[2]){S.expr='happy';toast('✅ Jawaban benar! Lanjut ke pos berikutnya.');document.getElementById('mazeQuiz').remove();mazePaused=false;checkpointX=player.x;}
+     else {S.expr='surprised';toast('❌ Salah. Coba soal berbeda!');document.getElementById('mazeQuiz').remove();mazePaused=false;}
+     render();
+   });
+ }
+ function update(){
+   if(mazePaused){gameRAF=requestAnimationFrame(update);return}
+   frame++;player.vx=0;if(keys.left)player.vx=-4.2;if(keys.right)player.vx=4.2;player.vy+=.65;
+   const oldY=player.y;player.x+=player.vx;player.x=Math.max(0,Math.min(W-player.w,player.x));player.y+=player.vy;player.on=false;
+   for(const p of platforms){
+     if(player.x+player.w>p.x&&player.x<p.x+p.w&&oldY+player.h<=p.y&&player.y+player.h>=p.y&&player.vy>=0){player.y=p.y-player.h;player.vy=0;player.on=true}
+   }
+   if(player.y>H+80){respawn();return}
+   enemies.forEach(e=>{e.x+=e.vx;if(e.x<e.min||e.x>e.max)e.vx*=-1;if(rectHit(player,e)&&player.inv<=0){respawn()}});
+   collectibles.forEach(o=>{if(!o.taken&&Math.hypot((player.x+19)-o.x,(player.y+23)-o.y)<34){o.taken=true;berries++;score+=100;toast('🍓 +100 skor!');if(berries===target)toast('🎯 Target tercapai! Cari bendera!')}})
+   if(player.x>checkpointX+190){checkpointX=player.x;score+=25; if(mode==='maze'){showMazeQuestion(Math.min(2,Math.floor(player.x/330))); return}}
+   if(player.inv>0)player.inv--;
+   if(player.x+player.w>flag.x&&player.y<flag.y+flag.h&&berries>=target){finish(true);return}
+   $('gLives').textContent=lives;$('gBerry').textContent=berries;$('gScore').textContent=score;$('gDist').textContent=Math.min(100,Math.round(player.x/(W-70)*100));
+   draw();gameRAF=requestAnimationFrame(update);
+ }
+ const onKey=e=>{
+   if(['ArrowLeft','ArrowRight','ArrowUp',' ','a','d','w','A','D','W'].includes(e.key))e.preventDefault();
+   if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=true;
+   if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=true;
+   if((e.key==='ArrowUp'||e.key==='w'||e.key==='W'||e.key===' ')&&player.on){player.vy=-12}
+ };
+ const offKey=e=>{if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=false;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=false};
+ const bind=(id,k)=>{const b=$(id);b.addEventListener('pointerdown',()=>{if(k==='jump'){if(player.on)player.vy=-12}else keys[k]=true});b.addEventListener('pointerup',()=>{if(k!=='jump')keys[k]=false});b.addEventListener('pointerleave',()=>{if(k!=='jump')keys[k]=false})};
+ window.addEventListener('keydown',onKey);window.addEventListener('keyup',offKey);
+ bind('left','left');bind('right','right');bind('jump','jump');
+ function cleanup(){window.removeEventListener('keydown',onKey);window.removeEventListener('keyup',offKey);if(gameRAF)cancelAnimationFrame(gameRAF);gameRAF=null}
+ activeCleanup=cleanup;draw();gameRAF=requestAnimationFrame(update);
+}
+
+/* FARM - PERTANIAN KEBUN */
+function farmGame(index){
+ const farm={plots:Array(6).fill(null),coins:0,selectedTool:'seed',timer:null};
+ const stages=[['🕳️','Tanah siap'],['🌱','Bibit'],['🌿','Tumbuh'],['🌸','Berbunga'],['🍓','Siap panen']];
+ $('gameContent').innerHTML=`<div class="quiz" style="max-width:820px;margin:auto">
+   <div style="font-size:46px">🌳 🧑‍🌾 🍓 🌱 🚜</div>
+   <h2>🌾 Kebun Pertanian Stroberi</h2>
+   <p>Kelola kebun seperti pertanian kecil: siapkan tanah, tanam bibit, siram tanaman, rawat sampai berbunga, lalu panen stroberi.</p>
+   <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:10px 0">
+    <button type="button" class="primary farmTool" data-tool="seed">🌱 Tanam</button>
+    <button type="button" class="primary farmTool" data-tool="water">💧 Siram</button>
+    <button type="button" class="primary farmTool" data-tool="harvest">🧺 Panen</button>
+   </div>
+   <div id="farmStats" style="font-weight:900;background:#fff7e7;border-radius:14px;padding:9px;margin:8px 0"></div>
+   <div id="farmBoard" style="margin:12px 0;padding:18px 16px;border-radius:28px;background:linear-gradient(#7eaa52 0 10%,#6f9a48 10% 12%,#8a603b 12% 100%);box-shadow:inset 0 8px 0 #b9d77b, inset 0 -8px 0 #65442d;position:relative;overflow:hidden;min-height:390px"></div>
+   <button class="primary" id="farmReset" type="button">🔄 Mulai Kebun Baru</button>
+   <p id="farmMsg"></p>
+ </div>`;
+ const board=$('farmBoard');
+ function stage(p,now){
+   if(!p)return 0;
+   const pct=Math.min(100,Math.round((now-p.planted)/p.duration*100));
+   return pct<20?1:p.watered? (pct<55?2:(pct<82?3:4)) : (pct<45?1:2);
+ }
+ function timeLeft(p,now){return Math.max(0,Math.ceil((p.ready-now)/1000));}
+ function draw(){
+   const now=Date.now();
+   const positions=[[16,22],[43,18],[70,24],[25,58],[52,54],[79,60]];
+   board.innerHTML=`<div style="position:absolute;inset:14px 14px 20px;border-radius:24px;background:repeating-linear-gradient(0deg,rgba(72,43,25,.22) 0 3px,transparent 3px 24px),linear-gradient(#9b6a42,#805333);box-shadow:inset 0 0 0 6px rgba(64,40,24,.18)"></div>
+   <div style="position:relative;min-height:350px">${farm.plots.map((p,i)=>{
+     const [x,y]=positions[i];
+     if(!p)return `<button type="button" data-i="${i}" aria-label="Lahan tanam ${i+1}" style="position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:86px;height:58px;border:0;border-radius:50%;background:radial-gradient(ellipse,#b87945 0 45%,#70462e 46% 100%);box-shadow:0 5px 8px rgba(40,20,10,.3);font-size:28px;cursor:pointer">🌱<small style="display:block;font-size:9px;color:#fff;font-weight:900">Tanam</small></button>`;
+     const st=stage(p,now), pct=Math.min(100,Math.round((now-p.planted)/p.duration*100));
+     const label=st===4?'SIAP PANEN':p.watered?`${stages[st][1]} • ${timeLeft(p,now)} dtk`:'PERLU DISIRAM';
+     return `<button type="button" data-i="${i}" aria-label="Tanaman ${i+1}" style="position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:104px;height:92px;border:0;border-radius:50%;background:radial-gradient(ellipse,#c4874e 0 54%,#74492f 55% 100%);box-shadow:0 6px 10px rgba(40,20,10,.3);cursor:pointer;font-size:42px;z-index:2">${stages[st][0]}<small style="display:block;font-size:9px;color:#fff;font-weight:900;text-shadow:0 1px 2px #000">${label}</small><div style="height:5px;background:#d8c4ae;border-radius:9px;margin:4px 18px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#72bd55"></div></div></button>`;
+   }).join('')}<div style="position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font-size:24px;white-space:nowrap">🌿 🧺 🧑‍🌾 🌿</div></div>`;
+   board.querySelectorAll('button').forEach(b=>b.onclick=()=>actPlot(+b.dataset.i));
+   const ready=farm.plots.filter(p=>p&&p.ready<=now).length;
+   $('farmStats').textContent=`🌱 Tanaman: ${farm.plots.filter(Boolean).length}/6  •  🍓 Siap panen: ${ready}  •  🪙 Hasil kebun: ${farm.coins} Coin  •  🛠️ Alat: ${farm.selectedTool==='seed'?'Tanam':farm.selectedTool==='water'?'Siram':'Panen'}`;
+ }
+ function actPlot(i){
+   const p=farm.plots[i],now=Date.now();
+   if(farm.selectedTool==='seed'){
+     if(p){toast('🌿 Bagian lahan ini sudah ditanami. Pilih Siram atau Panen.');return}
+     const duration=18000+(i%3)*3000;
+     farm.plots[i]={planted:now,ready:now+duration,duration,watered:false};S.expr='focused';toast('🌱 Bibit stroberi ditanam di lahan '+(i+1)+'!');
+   }else if(farm.selectedTool==='water'){
+     if(!p){toast('🟫 Tanam bibit dulu di lahan ini.');return}
+     if(p.ready<=now){toast('🧺 Stroberi sudah siap dipanen!');return}
+     if(p.watered){toast('💧 Tanaman ini sudah disiram.');return}
+     p.watered=true;p.ready=Math.max(now+5000,p.ready-4000);S.expr='happy';toast('💧 Tanaman disiram! Pertumbuhan dipercepat.');
+   }else{
+     if(!p){toast('🧑‍🌾 Tidak ada tanaman di bedeng ini.');return}
+     if(now<p.ready){toast('⏳ Tunggu sampai stroberi matang.');return}
+     farm.plots[i]=null;farm.coins+=35;S.coins+=35;gainXP(12);S.expr='happy';toast('🍓 Panen berhasil! +35 Coin');
+     if(farm.coins>=105){complete(index,60,55);toast('🏆 Kebun berhasil dikelola!');}
+   }
+   draw();render();
+ }
+ document.querySelectorAll('.farmTool').forEach(b=>b.onclick=()=>{farm.selectedTool=b.dataset.tool;S.expr='focused';draw()});
+ $('farmReset').onclick=()=>{farm.plots=Array(6).fill(null);farm.coins=0;farm.selectedTool='seed';S.expr='happy';toast('🌾 Kebun baru siap digarap!');draw()};
+ farm.timer=setInterval(draw,500);draw();
+ activeCleanup=()=>{if(farm.timer)clearInterval(farm.timer);farm.timer=null};
+}
+
+/* PUZZLE + ICE CREAM */
+function puzzleGame(i){
+ const pieces=[['🌰','Biji'],['🌱','Tunas'],['🌿','Tanaman'],['🌸','Bunga'],['🍓','Buah']],sel=[];
+ $('gameContent').innerHTML=`<div class="quiz"><h3>🧩 Susun pertumbuhan stroberi</h3><p>Pilih urutannya dari biji sampai buah.</p><div class="recipe" id="pieces">${pieces.map((p,n)=>`<button class="ingredient" data-n="${n}">${p[0]}<small>${p[1]}</small></button>`).join('')}</div><button class="primary" id="checkPuzzle" style="margin-top:12px">Periksa</button><p id="puzzleMsg"></p></div>`;
+ document.querySelectorAll('#pieces .ingredient').forEach(b=>b.onclick=()=>{let n=+b.dataset.n;if(sel.includes(n))return;sel.push(n);b.classList.add('selected')});
+ $('checkPuzzle').onclick=()=>{if(sel.join(',')==='0,1,2,3,4'){complete(i,45,35);$('puzzleMsg').textContent='🎉 Benar!';}else{$('puzzleMsg').textContent='💡 Petunjuk: biji → tunas → tanaman → bunga → buah.';sel.length=0;document.querySelectorAll('#pieces .ingredient').forEach(b=>b.classList.remove('selected'))}}
+}
+function iceCreamGame(i){
+ const ingredients=[['🍓','Stroberi'],['🥛','Susu'],['🍯','Madu'],['🧊','Es'],['🍫','Cokelat']],chosen=[];
+ $('gameContent').innerHTML=`<div class="quiz"><h3>🍦 Racik Es Krim Stroberi</h3><p>Pilih bahan lalu buat es krim.</p><div class="recipe">${ingredients.map((x,n)=>`<button class="ingredient" data-n="${n}">${x[0]}<small>${x[1]}</small></button>`).join('')}</div><button class="primary" id="makeIce" style="margin-top:12px">🍦 Buat Es Krim</button><p id="iceMsg"></p></div>`;
+ document.querySelectorAll('.ingredient').forEach(b=>b.onclick=()=>{let n=+b.dataset.n;if(chosen.includes(n)){chosen.splice(chosen.indexOf(n),1);b.classList.remove('selected')}else{chosen.push(n);b.classList.add('selected')}});
+ $('makeIce').onclick=()=>{if(chosen.includes(0)&&chosen.includes(1)){complete(i,50,40);$('iceMsg').innerHTML='🎉 <b>Es krim berhasil!</b> 🍓🥛 → 🍦'}else toast('🍓 Pilih stroberi dan susu!')}
+}
+function renderInventory(){const box=$('inventoryItems');if(!box)return;box.innerHTML=S.owned.map(name=>`<div class="item" style="border:${S.outfit===name?'2px solid var(--red)':'1px solid #eadfe5'}"><div class="big">${({'Berry Original':'🍓','Pita Berry':'🎀','Topi Kebun':'👒','Super Berry':'🦸','Rumah Stroberi':'🏠','Bibit Bonus':'🌱','Tas Petualang':'🎒'}[name]||'🍓')}</div><b>${name}</b><button type="button" onclick="equip('${name}')">${S.outfit===name?'Dipakai':'Pakai'}</button></div>`).join('')}
+function equip(name){if(!S.owned.includes(name))return;S.outfit=name;S.expr='happy';save();toast('👕 '+name+' dikenakan pada Berry!');renderShop();renderInventory();drawBerry();render()}
+function renderShop(){
+ const items=[['🎀','Pita Berry',50],['👒','Topi Kebun',80],['🦸','Super Berry',150],['🏠','Rumah Stroberi',120],['🍓','Bibit Bonus',40],['🎒','Tas Petualang',90]];
+ const box=$('shopgrid'); if(!box)return;
+ box.innerHTML=items.map(x=>{
+   const owned=S.owned.includes(x[1]), equipped=S.outfit===x[1];
+   const status=owned?(equipped?'✅ SUDAH DIBELI<br><span style=\"color:#16a34a\">👕 SEDANG DIPAKAI</span>':'✅ SUDAH DIBELI'):'🪙 '+x[2]+' Coin';
+   const action=owned?(equipped?'Dipakai':'Kenakan'):'Beli';
+   return `<div class="item ${owned?'shop-owned':''}" style="position:relative;${owned?'border:2px solid #22c55e;background:#f0fdf4;':''}">
+     ${owned?'<div style=\"position:absolute;top:7px;right:7px;background:#22c55e;color:white;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:900;\">DIMILIKI</div>':''}
+     <div class="big">${x[0]}</div><b>${x[1]}</b><p>${status}</p>
+     <button type="button" ${equipped?'disabled':''} onclick="buy(${x[2]},'${x[1]}')">${action}</button>
+   </div>`;
+ }).join('');
+}
+function buy(cost,name){
+ if(S.owned.includes(name)){ equip(name); renderShop(); return; }
+ if(S.coins<cost)return toast('🪙 Coin belum cukup');
+ S.coins-=cost; S.owned.push(name); S.outfit=name; S.expr='happy';
+ save();
+ toast('✅ '+name+' berhasil dibeli dan langsung dikenakan!');
+ renderShop(); renderInventory(); drawBerry(); render();
+}
+function drawBerryCharacter(ctx,cx,cy,scale=1,expression='happy',small=false){
+ ctx.save();ctx.translate(cx,cy);ctx.scale(scale,scale);
+ /* Shadow + body: a plump, dimensional strawberry rather than a flat icon. */
+ ctx.fillStyle='rgba(35,20,28,.20)';ctx.beginPath();ctx.ellipse(0,91,62,15,0,0,Math.PI*2);ctx.fill();
+ const body=ctx.createRadialGradient(-22,-30,6,12,20,78);body.addColorStop(0,'#ffb2c5');body.addColorStop(.28,'#ff718f');body.addColorStop(.66,'#ed3f69');body.addColorStop(1,'#a91543');
+ ctx.fillStyle=body;ctx.beginPath();ctx.moveTo(0,-65);ctx.bezierCurveTo(49,-56,63,-12,52,31);ctx.bezierCurveTo(46,67,25,91,0,96);ctx.bezierCurveTo(-25,91,-46,67,-52,31);ctx.bezierCurveTo(-63,-12,-49,-56,0,-65);ctx.closePath();ctx.fill();
+ /* soft side highlight */
+ const hi=ctx.createRadialGradient(-25,-28,2,-15,-10,42);hi.addColorStop(0,'rgba(255,255,255,.62)');hi.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=hi;ctx.beginPath();ctx.ellipse(-22,-22,28,47,-.35,0,Math.PI*2);ctx.fill();
+ /* leafy crown */
+ const leaf=ctx.createLinearGradient(0,-88,0,-52);leaf.addColorStop(0,'#78bd58');leaf.addColorStop(1,'#32783d');ctx.fillStyle=leaf;
+ ctx.beginPath();ctx.moveTo(0,-52);ctx.quadraticCurveTo(-18,-69,-38,-63);ctx.quadraticCurveTo(-29,-80,-7,-72);ctx.quadraticCurveTo(-2,-91,8,-72);ctx.quadraticCurveTo(30,-82,38,-63);ctx.quadraticCurveTo(17,-69,0,-52);ctx.fill();
+ ctx.strokeStyle='#285f35';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-73);ctx.lineTo(0,-53);ctx.stroke();
+ /* seeds */
+ ctx.fillStyle='#ffe4b5';
+ for(let a=-1.18;a<=1.18;a+=.30){const x=Math.sin(a)*31,y=Math.cos(a)*40+10;ctx.save();ctx.translate(x,y);ctx.rotate(a*.55);ctx.beginPath();ctx.ellipse(0,0,2.7,5.5,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+ /* little arms and feet give the character a living pose */
+ ctx.strokeStyle='#9d3151';ctx.lineWidth=7;ctx.lineCap='round';
+ const armLift=expression==='victory'?-15:(expression==='sad'?10:0);
+ ctx.beginPath();ctx.moveTo(-43,34);ctx.quadraticCurveTo(-62,50,-49,64+armLift);ctx.moveTo(43,34);ctx.quadraticCurveTo(62,50,49,64+(expression==='victory'?-24:0));ctx.stroke();
+ ctx.fillStyle='#f5c1c9';ctx.beginPath();ctx.arc(-49,64+armLift,6,0,Math.PI*2);ctx.arc(49,64+(expression==='victory'?-24:0),6,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#613147';ctx.beginPath();ctx.ellipse(-23,91,13,6,0,0,Math.PI*2);ctx.ellipse(23,91,13,6,0,0,Math.PI*2);ctx.fill();
+ /* expressive face */
+ const eyeY=-7;
+ ctx.fillStyle='rgba(255,139,158,.55)';ctx.beginPath();ctx.ellipse(-31,17,10,6,0,0,Math.PI*2);ctx.ellipse(31,17,10,6,0,0,Math.PI*2);ctx.fill();
+ function eye(x,y,rx,ry){ctx.fillStyle='#2d2028';ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x-2,y-2.5,2.5,0,Math.PI*2);ctx.fill();}
+ if(expression==='happy'||expression==='victory'){
+   ctx.strokeStyle='#342433';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.arc(-17,eyeY,8,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.beginPath();ctx.arc(17,eyeY,8,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
+   ctx.strokeStyle='#342433';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-28,-23);ctx.quadraticCurveTo(-18,-29,-9,-24);ctx.moveTo(9,-24);ctx.quadraticCurveTo(18,-29,28,-23);ctx.stroke();
+ }else if(expression==='sad'){
+   eye(-17,eyeY+2,7,9);eye(17,eyeY+2,7,9);ctx.strokeStyle='#342433';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-27,-25);ctx.quadraticCurveTo(-17,-18,-8,-22);ctx.moveTo(8,-22);ctx.quadraticCurveTo(17,-18,27,-25);ctx.stroke();
+ }else if(expression==='surprised'){
+   eye(-17,eyeY,9,11);eye(17,eyeY,9,11);ctx.strokeStyle='#342433';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-28,-28);ctx.quadraticCurveTo(-17,-35,-7,-28);ctx.moveTo(7,-28);ctx.quadraticCurveTo(17,-35,28,-28);ctx.stroke();
+ }else if(expression==='focused'){
+   eye(-17,eyeY+1,6,9);eye(17,eyeY+1,6,9);ctx.strokeStyle='#342433';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-28,-22);ctx.lineTo(-9,-17);ctx.moveTo(9,-17);ctx.lineTo(28,-22);ctx.stroke();
+ }else{eye(-17,eyeY,7,8);eye(17,eyeY,7,8);}
+ /* mouth with clear emotional shapes */
+ ctx.strokeStyle='#5b2438';ctx.fillStyle='#8b2348';ctx.lineWidth=4;ctx.lineCap='round';
+ if(expression==='happy'||expression==='victory'){
+   ctx.beginPath();ctx.arc(0,21,17,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,30,9,0,Math.PI);ctx.fill();
+ }else if(expression==='sad'){
+   ctx.beginPath();ctx.arc(0,39,15,Math.PI,Math.PI*2);ctx.stroke();
+ }else if(expression==='surprised'){
+   ctx.beginPath();ctx.ellipse(0,28,10,13,0,0,Math.PI*2);ctx.fill();
+ }else if(expression==='focused'){
+   ctx.beginPath();ctx.moveTo(-10,31);ctx.quadraticCurveTo(0,35,10,31);ctx.stroke();
+ }else{
+   ctx.beginPath();ctx.arc(0,28,10,.1,Math.PI-.1);ctx.stroke();
+ }
+ /* tiny sparkles/teardrop depending on emotion */
+ ctx.fillStyle='#fff';if(expression==='happy'||expression==='victory'){ctx.beginPath();ctx.arc(-27,-37,3,0,Math.PI*2);ctx.fill();}
+ if(expression==='sad'){ctx.fillStyle='#6db7e8';ctx.beginPath();ctx.ellipse(30,20,3,7,.2,0,Math.PI*2);ctx.fill();}
+ if(expression==='victory'){ctx.fillStyle='#ffd54d';ctx.font='bold 24px system-ui';ctx.fillText('★',-8,-104);}
+ /* outfit / equipped item */
+ if(S.outfit==='Pita Berry'){ctx.fillStyle='#ffd34f';ctx.beginPath();ctx.ellipse(0,-76,34,10,0,0,Math.PI*2);ctx.fill();ctx.fillRect(-8,-91,16,18)}
+ if(S.outfit==='Topi Kebun'){ctx.fillStyle='#e9c47a';ctx.beginPath();ctx.ellipse(0,-79,45,11,0,0,Math.PI*2);ctx.fill();ctx.fillRect(-25,-100,50,22)}
+ if(S.outfit==='Super Berry'){ctx.fillStyle='#4e8de8';ctx.beginPath();ctx.moveTo(-38,25);ctx.lineTo(-80,48);ctx.lineTo(-35,54);ctx.fill();ctx.fillStyle='#ffd54d';ctx.beginPath();ctx.arc(0,35,12,0,Math.PI*2);ctx.fill()}
+ if(S.outfit==='Rumah Stroberi'){ctx.strokeStyle='#9c5a4c';ctx.lineWidth=7;ctx.strokeRect(-43,38,86,40)}
+ if(S.outfit==='Tas Petualang'){ctx.fillStyle='#6d6a78';ctx.fillRect(-46,18,18,44);ctx.fillRect(28,18,18,44)}
+ ctx.restore();
+}
+function useEquipped(){S.expr='happy';toast('✨ '+S.outfit+' dipakai! Lihat karakter di Home.');show('home',document.querySelector('.nav'));}
+let t=0;
+function drawEquippedAccessoryCanvas(ctx,cx,cy,scale){
+  const st=window.berryAccessoryState?window.berryAccessoryState():null; const id=st&&st.equipped;
+  if(!id)return;
+  ctx.save(); ctx.translate(cx,cy); ctx.scale(scale,scale); ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.shadowColor='rgba(0,0,0,.22)'; ctx.shadowBlur=3; ctx.shadowOffsetY=2;
+  if(id==='leaf_hat'){ctx.font='30px sans-serif';ctx.fillText('🍃',0,-83);}
+  else if(id==='sun_hat'){ctx.font='34px sans-serif';ctx.fillText('👒',0,-88);}
+  else if(id==='sunglasses'){ctx.font='25px sans-serif';ctx.fillText('🕶️',0,-2);}
+  else if(id==='flower'){ctx.font='30px sans-serif';ctx.fillText('🌸',34,-48);}
+  else if(id==='backpack'){ctx.font='30px sans-serif';ctx.fillText('🎒',-37,25);}
+  else if(id==='crown'){ctx.font='31px sans-serif';ctx.fillText('👑',0,-88);}
+  ctx.restore();
+}
+function drawBerry(){const c=$('berryCanvas'),x=c.getContext('2d');t+=.08;x.clearRect(0,0,190,220);const by=115+Math.sin(t)*3;drawBerryCharacter(x,95,by,.82,S.expr,false);drawEquippedAccessoryCanvas(x,95,by,.82);x.font='28px sans-serif';x.textAlign='center';x.fillText('✨',30,48);x.fillText('💖',160,70)}
+setInterval(()=>{S.h=clamp(S.h-.12);S.e=clamp(S.e-.04);S.c=clamp(S.c-.06);render()},5000);
+setInterval(()=>{const b=['Ayo ke Berry Island! 🏝️','Hati-hati dengan hama! 🐛','Cari checkpoint agar aman! 🚩','Kumpulkan semua stroberi! 🍓'];$('bubble').textContent=b[Math.floor(Math.random()*b.length)]},5000);
+window.__berryHomeTimer=setInterval(()=>{if(!document.hidden)drawBerry();},180);drawBerry();render();renderShop();drawIsland();
+
+/* === PLAY-TO-EARN ACCESSORY SYSTEM === */
+(function(){
+  const KEY = "sw_accessory_progress_v2";
+  const catalog = [
+    {id:"leaf_hat", name:"Topi Daun", cost:40, icon:"🍃", cls:"acc-leaf"},
+    {id:"sun_hat", name:"Topi Kebun", cost:75, icon:"👒", cls:"acc-hat"},
+    {id:"sunglasses", name:"Kacamata Stroberi", cost:110, icon:"🕶️", cls:"acc-glasses"},
+    {id:"flower", name:"Bunga Ceria", cost:150, icon:"🌸", cls:"acc-flower"},
+    {id:"backpack", name:"Tas Petani", cost:200, icon:"🎒", cls:"acc-bag"},
+    {id:"crown", name:"Mahkota Berry", cost:300, icon:"👑", cls:"acc-crown"}
+  ];
+  const fallback = {points:0, owned:[], equipped:null, games:0};
+  function load(){ try{return Object.assign({},fallback,JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){return {...fallback};} }
+  function save(s){localStorage.setItem(KEY,JSON.stringify(s));}
+  function state(){return load();}
+
+  window.berryAwardPoints = function(amount, reason=""){
+    const s=state(); s.points=Math.max(0,(s.points||0)+Math.max(0,amount)); s.games=(s.games||0)+1; save(s);
+    updateAccessoryUI();
+    showPointToast("+"+amount+" POIN"+(reason?" • "+reason:""));
+    return s.points;
+  };
+
+  function accessoryConfirm(item, action){
+    showPointToast((action==='buy'?'✅ Berhasil dibeli: ':'👕 Sekarang dipakai: ')+item.name);
+    let t=document.getElementById('accessory-confirm');
+    if(!t){t=document.createElement('div');t.id='accessory-confirm';t.style.cssText='position:fixed;left:50%;top:78px;transform:translateX(-50%);z-index:10000;background:#ffffff;border:3px solid #f59e0b;padding:12px 18px;border-radius:18px;font-weight:900;box-shadow:0 10px 30px #0002;text-align:center;min-width:240px;';document.body.appendChild(t);}
+    t.innerHTML=(action==='buy'?'🛍️ <b>'+item.name+'</b><br><span style="color:#16a34a">Sudah dibeli & dikenakan!</span>':'👕 <b>'+item.name+'</b><br><span style="color:#16a34a">Sudah dikenakan pada Berry!</span>');
+    clearTimeout(t._x);t._x=setTimeout(()=>t.remove(),1800);
+  }
+
+  window.berryBuyAccessory = function(id){
+    const s=state(), item=catalog.find(x=>x.id===id); if(!item)return;
+    if(s.owned.includes(id)){ s.equipped=id; save(s); applyAccessory(); updateAccessoryUI(); accessoryConfirm(item,'equip'); drawBerry(); return; }
+    if(s.points < item.cost){ showPointToast('Poin belum cukup!'); return; }
+    s.points-=item.cost; s.owned.push(id); s.equipped=id; save(s);
+    applyAccessory(); updateAccessoryUI(); drawBerry(); accessoryConfirm(item,'buy');
+  };
+
+  window.berryEquipAccessory = function(id){
+    const s=state(), item=catalog.find(x=>x.id===id); if(!item || !s.owned.includes(id))return;
+    s.equipped=id; save(s); applyAccessory(); updateAccessoryUI(); drawBerry(); accessoryConfirm(item,'equip');
+  };
+
+  function ensureLayer(){
+    document.querySelectorAll(".char-wrap").forEach(w=>{
+      if(!w.querySelector(".accessory-layer")){
+        const d=document.createElement("div"); d.className="accessory-layer"; w.appendChild(d);
+      }
+    });
+  }
+
+  function applyAccessory(){
+    ensureLayer();
+    const s=state(), item=catalog.find(x=>x.id===s.equipped);
+    document.querySelectorAll(".accessory-layer").forEach(layer=>{
+      layer.innerHTML="";
+      if(!item)return;
+      const el=document.createElement("div");
+      el.className="avatar-accessory "+item.cls;
+      el.textContent=item.icon;
+      el.style.cssText="position:absolute;left:50%;transform:translateX(-50%);font-size:34px;top:-12px;text-shadow:0 2px 2px #0005;";
+      if(item.id==="sunglasses") el.style.top="32%";
+      if(item.id==="flower") {el.style.left="78%";el.style.top="5%";}
+      if(item.id==="backpack") {el.style.left="18%";el.style.top="38%";}
+      layer.appendChild(el);
+    });
+  }
+
+  function updateAccessoryUI(){
+    const s=state();
+    document.querySelectorAll("[data-berry-points]").forEach(e=>e.textContent=s.points);
+    document.querySelectorAll("[data-accessory-shop]").forEach(box=>{
+      box.innerHTML="";
+      catalog.forEach(item=>{
+        const owned=s.owned.includes(item.id), equipped=s.equipped===item.id;
+        const b=document.createElement("button");
+        b.className="shop-item "+(owned?"shop-owned ":"shop-locked");
+        b.style.cssText="margin:6px;padding:10px;border-radius:14px;border:2px solid #f59e0b;background:#fff;cursor:pointer;";
+        b.innerHTML=`<div style="font-size:26px">${item.icon}</div><b>${item.name}</b><div>${owned?(equipped?"✅ Sudah Dibeli • 👕 Sedang Dipakai":"✅ Sudah Dibeli • 👕 Kenakan"):("🔒 "+item.cost+" poin")}</div>`;
+        b.onclick=()=>owned?berryEquipAccessory(item.id):berryBuyAccessory(item.id);
+        box.appendChild(b);
+      });
+    });
+  }
+
+  function showPointToast(msg){
+    let t=document.getElementById("point-toast");
+    if(!t){t=document.createElement("div");t.id="point-toast";t.style.cssText="position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:9999;background:#fff7ed;border:2px solid #fb923c;padding:10px 16px;border-radius:999px;font-weight:900;box-shadow:0 8px 25px #0002;";document.body.appendChild(t);}
+    t.textContent=msg;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",1400);
+  }
+
+  window.berryAccessoryCatalog=catalog;
+  window.berryAccessoryState=state;
+  window.addEventListener("load",()=>{ensureLayer();applyAccessory();updateAccessoryUI();});
+})();
+
+/* Reward hooks: playing earns points; buying accessories spends points. */
+(function(){
+  const reward=window.berryAwardPoints;
+  // Make existing game completions award points without changing their core rules.
+  window.rewardForGame = function(kind, amount){
+    if(typeof reward==="function") reward(amount, kind);
+  };
+})();
+
+
+(function(){
+  document.addEventListener("click",function(e){
+    const b=e.target.closest("button");
+    if(!b)return;
+    const tx=(b.textContent||"").toLowerCase();
+    if(/selesai|menang|panen|jawab benar|finish|next level|lanjut/.test(tx) && !b.dataset.pointRewarded){
+      b.dataset.pointRewarded="1";
+      if(typeof rewardForGame==="function") rewardForGame("berhasil bermain",15);
+    }
+  },true);
+})();
+
+</script>
+
+
+<script id="berry-character-animation-v3-js">
+(function(){
+  const states=["berry-idle","berry-walk","berry-jump","berry-hit","berry-land","berry-use","berry-win"];
+  let lastMove=0;
+
+  function chars(){
+    return Array.from(document.querySelectorAll(".berry-character,.char-wrap"));
+  }
+  function clear(c){
+    states.forEach(s=>c.classList.remove(s));
+  }
+  function animate(name, ms){
+    chars().forEach(c=>{
+      clear(c); c.classList.add(name);
+      if(ms) setTimeout(()=>{
+        c.classList.remove(name);
+        if(!c.classList.contains("berry-walk") && !c.classList.contains("berry-jump") &&
+           !c.classList.contains("berry-hit") && !c.classList.contains("berry-use") &&
+           !c.classList.contains("berry-win")) c.classList.add("berry-idle");
+      },ms);
+    });
+  }
+  function dust(){
+    chars().forEach(c=>{
+      const d=document.createElement("span");
+      d.className="berry-foot-dust";
+      d.style.left=(35+Math.random()*25)+"%";
+      c.appendChild(d);
+      setTimeout(()=>d.remove(),350);
+    });
+  }
+  function spark(){
+    chars().forEach(c=>{
+      const s=document.createElement("span");
+      s.className="berry-use-spark";
+      s.textContent=(window.berryAccessoryState && window.berryAccessoryState().equipped)?"✨":"💖";
+      c.appendChild(s);
+      setTimeout(()=>s.remove(),750);
+    });
+  }
+
+  window.berryAnimate = function(name,ms){ animate(name,ms); };
+  window.berryCharacterWalk = function(){ animate("berry-walk"); dust(); };
+  window.berryCharacterJump = function(){ animate("berry-jump",600); };
+  window.berryCharacterHit = function(){ animate("berry-hit",550); };
+  window.berryCharacterLand = function(){ animate("berry-land",280); dust(); };
+  window.berryCharacterUse = function(){ animate("berry-use",750); spark(); };
+  window.berryCharacterWin = function(){ animate("berry-win",900); };
+
+  /* Keyboard controls used by the platformer */
+  document.addEventListener("keydown",e=>{
+    const k=e.key.toLowerCase();
+    if(["arrowleft","arrowright","a","d"].includes(k)){
+      if(Date.now()-lastMove>180){window.berryCharacterWalk();lastMove=Date.now();}
+    }
+    if(["arrowup","w"," "].includes(k)) window.berryCharacterJump();
+  },true);
+
+  /* Touch/control buttons */
+  document.addEventListener("pointerdown",e=>{
+    const b=e.target.closest("button,[role=button]");
+    if(!b)return;
+    const t=(b.textContent||"").toLowerCase();
+    if(/kiri|left|◀|←/.test(t)) window.berryCharacterWalk();
+    if(/kanan|right|▶|→/.test(t)) window.berryCharacterWalk();
+    if(/lompat|jump|↑|⬆/.test(t)) window.berryCharacterJump();
+  },true);
+
+  /* Detect common damage / success messages without changing gameplay logic. */
+  const oldToast=window.showPointToast;
+  if(typeof oldToast==="function"){
+    window.showPointToast=function(msg){
+      if(/belum cukup|gagal|kena|damage|hp/i.test(String(msg))) window.berryCharacterHit();
+      if(/terbeli|dipakai|pakai/i.test(String(msg))) window.berryCharacterUse();
+      return oldToast.apply(this,arguments);
+    };
+  }
+
+  /* Inventory/equip interaction */
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("button");
+    if(!b)return;
+    const tx=(b.textContent||"").toLowerCase();
+    if(/pakai|dipakai|equip|beli/.test(tx)){
+      setTimeout(()=>window.berryCharacterUse(),20);
+    }
+    if(/menang|selesai|berhasil|finish|level selesai/.test(tx)){
+      setTimeout(()=>window.berryCharacterWin(),20);
+    }
+  },true);
+
+  window.addEventListener("load",()=>setTimeout(()=>animate("berry-idle"),300));
+})();
+</script>
+
+
+<style id="maze-escrime-fix-v4-css">
+.maze-strawberry.collected,.strawberry.collected,[data-strawberry].collected{display:none!important;pointer-events:none!important}
+#escrime-game button{transition:transform .12s ease,box-shadow .12s ease}
+#escrime-game button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 5px 12px #0002}
+</style>
+<script id="maze-escrime-fix-v4">
+(function(){
+  /* Prevent a collected strawberry from being processed twice. */
+  window.__mazeCollected = window.__mazeCollected || new Set();
+  window.safeCollectStrawberry = function(item,id,onCollect){
+    try{
+      const key=String(id ?? item?.id ?? item?.dataset?.id ?? "");
+      if(key && window.__mazeCollected.has(key)) return false;
+      if(key) window.__mazeCollected.add(key);
+      if(item){
+        item.dataset.collected="1";
+        item.classList.add("collected");
+        item.style.pointerEvents="none";
+        item.style.opacity="0";
+      }
+      if(typeof onCollect==="function") onCollect();
+      return true;
+    }catch(err){ console.warn("Strawberry pickup recovered:",err); return false; }
+  };
+
+  /* ===== ESCRIME: INGREDIENT -> BLENDER -> CONE -> TOPPING -> EAT ===== */
+  const ingredients=[
+    {id:"strawberry",name:"Stroberi",icon:"🍓"},
+    {id:"milk",name:"Susu",icon:"🥛"},
+    {id:"sugar",name:"Gula",icon:"🍚"},
+    {id:"cream",name:"Krim",icon:"🥛"}
+  ];
+  const toppings=[
+    {id:"berry",name:"Potongan Berry",icon:"🍓"},
+    {id:"choco",name:"Cokelat",icon:"🍫"},
+    {id:"sprinkle",name:"Sprinkle",icon:"🌈"},
+    {id:"cookie",name:"Biskuit",icon:"🍪"}
+  ];
+  let state={blender:[],blended:false,cone:false,topping:null};
+
+  function build(){
+    if(document.getElementById("escrime-game")) return;
+    const host=document.body;
+    const box=document.createElement("section");
+    box.id="escrime-game";
+    box.style.cssText="margin:20px auto;max-width:1050px;padding:20px;border:3px solid #f9a8d4;border-radius:26px;background:linear-gradient(135deg,#fff7fb,#fff1f2);box-shadow:0 12px 30px #0001";
+    box.innerHTML=`
+      <h2 style="margin:0 0 6px">🍨 Escrime — Strawberry Ice Cream Lab</h2>
+      <p style="margin:0 0 15px">Buat es krim sendiri: <b>geser bahan ke blender → blender → masukkan ke cone → pilih topping → berikan ke Berry untuk dimakan.</b></p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div style="padding:14px;border-radius:18px;background:white;border:2px solid #fecdd3">
+          <b>1️⃣ Bahan</b><div id="ice-ingredients" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px"></div>
+          <small>💡 Bisa klik bahan atau drag ke blender.</small>
+        </div>
+        <div id="ice-blender" style="padding:14px;min-height:145px;border-radius:18px;background:#faf5ff;border:3px dashed #a78bfa;text-align:center">
+          <div style="font-size:48px">🧋</div><b>BLENDER</b>
+          <div id="ice-blender-items" style="min-height:30px;margin:8px"></div>
+          <button id="ice-blend-btn" disabled>🔄 Blender</button>
+        </div>
+        <div id="ice-cone" style="padding:14px;min-height:145px;border-radius:18px;background:#fff7ed;border:3px dashed #fb923c;text-align:center">
+          <div style="font-size:48px">🍦</div><b>CONE</b>
+          <div id="ice-cone-content" style="min-height:30px;margin:8px"></div>
+          <button id="ice-cone-btn" disabled>🍦 Masukkan Es Krim</button>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:14px;background:white;border-radius:18px;border:2px solid #fbcfe8">
+        <b>2️⃣ Pilih Topping</b><div id="ice-toppings" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px"></div>
+      </div>
+      <div style="margin-top:14px;text-align:center;padding:15px;border-radius:18px;background:#fff">
+        <div id="ice-final" style="font-size:72px;min-height:85px">🍦</div>
+        <button id="ice-eat-btn" disabled style="padding:12px 20px;border:0;border-radius:15px;background:#ec4899;color:#fff;font-weight:900">😋 Berikan ke Berry</button>
+        <div id="ice-status" style="margin-top:9px;font-weight:800">Masukkan minimal 2 bahan ke blender.</div>
+      </div>`;
+    host.appendChild(box);
+
+    const ih=box.querySelector("#ice-ingredients");
+    ingredients.forEach(x=>{
+      const b=document.createElement("button");
+      b.draggable=true;b.textContent=x.icon+" "+x.name;
+      b.style.cssText="padding:9px 12px;border:2px solid #fda4af;border-radius:12px;background:#fff;cursor:grab;font-weight:800";
+      b.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",x.id));
+      b.onclick=()=>add(x.id);ih.appendChild(b);
+    });
+    const blender=box.querySelector("#ice-blender");
+    blender.ondragover=e=>e.preventDefault();
+    blender.ondrop=e=>{e.preventDefault();add(e.dataTransfer.getData("text/plain"));};
+    toppings.forEach(x=>{
+      const b=document.createElement("button");b.textContent=x.icon+" "+x.name;
+      b.style.cssText="padding:9px 12px;border:2px solid #fbcfe8;border-radius:12px;background:#fff;cursor:pointer;font-weight:800";
+      b.onclick=()=>{if(state.cone){state.topping=x;status("✨ Topping "+x.name+" dipilih!");render();}};
+      box.querySelector("#ice-toppings").appendChild(b);
+    });
+    box.querySelector("#ice-blend-btn").onclick=blend;
+    box.querySelector("#ice-cone-btn").onclick=cone;
+    box.querySelector("#ice-eat-btn").onclick=eat;
+    render();
+  }
+  function status(t){const e=document.getElementById("ice-status");if(e)e.textContent=t;}
+  function add(id){
+    const x=ingredients.find(a=>a.id===id);
+    if(!x||state.blended)return;
+    if(state.blender.includes(id)){status("Bahan itu sudah masuk.");return;}
+    state.blender.push(id);status("✅ "+x.name+" masuk ke blender.");render();
+  }
+  function blend(){
+    if(state.blender.length<2)return;
+    state.blended=true;status("🔄 Blender bekerja... campuran es krim siap!");
+    const b=document.getElementById("ice-blender");
+    if(b)b.animate([{transform:"scale(1)"},{transform:"scale(1.03)"},{transform:"scale(1)"}],{duration:650});
+    setTimeout(render,650);
+  }
+  function cone(){
+    if(!state.blended)return;
+    state.cone=true;status("🍦 Es krim masuk ke cone. Sekarang pilih topping.");render();
+  }
+  function render(){
+    const bi=document.getElementById("ice-blender-items"),cc=document.getElementById("ice-cone-content"),f=document.getElementById("ice-final");
+    if(bi)bi.textContent=state.blender.map(id=>ingredients.find(x=>x.id===id)?.icon||"").join(" ");
+    if(cc)cc.textContent=state.cone?"🍦 Es krim siap dihias!":"Kosong";
+    if(f)f.textContent=state.cone?"🍦"+(state.topping?.icon||""):"🍦";
+    const bb=document.getElementById("ice-blend-btn"),cb=document.getElementById("ice-cone-btn"),eb=document.getElementById("ice-eat-btn");
+    if(bb)bb.disabled=state.blender.length<2||state.blended;
+    if(cb)cb.disabled=!state.blended||state.cone;
+    if(eb)eb.disabled=!state.cone||!state.topping;
+  }
+  function eat(){
+    if(!state.cone||!state.topping)return;
+    status("😋 Berry memakan es krim "+state.topping.name+"! +30 poin");
+    if(typeof window.berryAwardPoints==="function")window.berryAwardPoints(30,"Es Krim");
+    if(typeof window.berryCharacterUse==="function")window.berryCharacterUse();
+    const f=document.getElementById("ice-final");
+    if(f)f.animate([{transform:"scale(1)"},{transform:"scale(1.25)"},{transform:"scale(.1)",opacity:0}],{duration:850,fill:"forwards"});
+    setTimeout(()=>{state={blender:[],blended:false,cone:false,topping:null};render();if(f)f.style.opacity="1";status("🎉 Selesai! Buat es krim berikutnya.");},900);
+  }
+  window.resetIceCreamGame=()=>{state={blender:[],blended:false,cone:false,topping:null};render();};
+  /* Standalone ice-cream panel removed: Dapur Es Krim is available only from Map. */
+})();
+</script>
+
+
+<!-- === BERRY WORLD REAL-PLAYABLE + EXPRESSIVE CHARACTER PATCH === -->
+<style id="berry-realistic-v5-css">
+/* Never render the old standalone ice-cream panel on the home page. */
+#escrime-game{display:none!important}
+
+#gameCanvas{image-rendering:auto;cursor:default;touch-action:none}
+.berry-expression-badge{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:8;padding:6px 11px;border-radius:999px;background:#ffffffdd;border:1px solid #f1dce5;font-weight:900;font-size:12px;pointer-events:none}
+#escrime-game .ice-ingredient.dragging{opacity:.45;transform:scale(.96)}
+@keyframes berryBlink{0%,88%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+</style>
+<script id="berry-realistic-v5-js">
+(function(){
+'use strict';
+
+/* ---------- Expressive Berry renderer ---------- */
+let faceTime=0, blinkUntil=0, nextBlink=performance.now()+2200;
+function faceTick(){
+  faceTime+=.035;
+  const now=performance.now();
+  if(now>nextBlink){blinkUntil=now+115;nextBlink=now+1800+Math.random()*2800;}
+}
+function rr(ctx,x,y,w,h,r){const q=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+q,y);ctx.arcTo(x+w,y,x+w,y+h,q);ctx.arcTo(x+w,y+h,x,y+h,q);ctx.arcTo(x,y+h,x,q);ctx.arcTo(x,y,x+w,y,q);ctx.closePath();}
+window.drawBerryCharacter=function(ctx,cx,cy,scale=1,expression='happy',small=false){
+  ctx.save();ctx.translate(cx,cy);ctx.scale(scale,scale);faceTick();
+  const bob=expression==='idle'?Math.sin(faceTime*1.8)*1.5:0;
+  ctx.translate(0,bob);
+  /* shadow */ ctx.fillStyle='rgba(40,25,35,.20)';ctx.beginPath();ctx.ellipse(0,91,63,15,0,0,Math.PI*2);ctx.fill();
+  /* body */
+  const body=ctx.createRadialGradient(-22,-30,7,15,20,78);body.addColorStop(0,'#ffb0c7');body.addColorStop(.34,'#ff6f98');body.addColorStop(.72,'#ee416f');body.addColorStop(1,'#a91845');
+  ctx.fillStyle=body;ctx.beginPath();ctx.moveTo(0,-64);ctx.bezierCurveTo(58,-53,65,15,42,61);ctx.bezierCurveTo(27,91,-26,95,-43,61);ctx.bezierCurveTo(-66,15,-57,-53,0,-64);ctx.fill();
+  /* gloss */ctx.fillStyle='rgba(255,255,255,.32)';ctx.beginPath();ctx.ellipse(-24,-25,10,24,-.35,0,Math.PI*2);ctx.fill();
+  /* leaves */ctx.fillStyle='#3f913d';ctx.beginPath();ctx.ellipse(-17,-61,27,11,-.55,0,Math.PI*2);ctx.ellipse(15,-63,28,11,.55,0,Math.PI*2);ctx.ellipse(0,-73,12,25,0,0,Math.PI*2);ctx.fill();
+  /* seeds */ctx.fillStyle='#ffe0a8';for(let a=-1.25;a<=1.25;a+=.36){const x=Math.sin(a)*31,y=Math.cos(a)*39+12;ctx.beginPath();ctx.ellipse(x,y,3.1,6,a,0,Math.PI*2);ctx.fill();}
+  /* cheeks */
+  if(['happy','victory','surprised','focused'].includes(expression)){ctx.fillStyle=expression==='surprised'?'rgba(255,130,150,.48)':'rgba(255,120,150,.30)';ctx.beginPath();ctx.ellipse(-27,16,10,6,0,0,Math.PI*2);ctx.ellipse(27,16,10,6,0,0,Math.PI*2);ctx.fill();}
+  /* eyes */
+  const eyeY=-7, blink=performance.now()<blinkUntil && expression!=='surprised';
+  if(blink){ctx.strokeStyle='#342433';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-24,eyeY);ctx.quadraticCurveTo(-17,eyeY+4,-10,eyeY);ctx.moveTo(10,eyeY);ctx.quadraticCurveTo(17,eyeY+4,24,eyeY);ctx.stroke();}
+  else if(expression==='happy'||expression==='victory'){
+    ctx.strokeStyle='#342433';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.arc(-17,eyeY,8,Math.PI*1.12,Math.PI*1.88);ctx.arc(17,eyeY,8,Math.PI*1.12,Math.PI*1.88);ctx.stroke();
+  }else if(expression==='sad'){
+    ctx.fillStyle='#342433';ctx.beginPath();ctx.ellipse(-17,eyeY+2,6,8,0,0,Math.PI*2);ctx.ellipse(17,eyeY+2,6,8,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#342433';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-26,-20);ctx.quadraticCurveTo(-17,-25,-9,-21);ctx.moveTo(9,-21);ctx.quadraticCurveTo(17,-25,26,-20);ctx.stroke();
+  }else if(expression==='surprised'){
+    ctx.fillStyle='#342433';ctx.beginPath();ctx.arc(-17,eyeY,8,0,Math.PI*2);ctx.arc(17,eyeY,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-15,eyeY-2,2.5,0,Math.PI*2);ctx.arc(19,eyeY-2,2.5,0,Math.PI*2);ctx.fill();
+  }else if(expression==='focused'){
+    ctx.fillStyle='#342433';ctx.beginPath();ctx.ellipse(-17,eyeY+1,6,8,0,0,Math.PI*2);ctx.ellipse(17,eyeY+1,6,8,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#342433';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-26,-20);ctx.lineTo(-9,-17);ctx.moveTo(9,-17);ctx.lineTo(26,-20);ctx.stroke();
+  }else{
+    ctx.fillStyle='#342433';ctx.beginPath();ctx.arc(-17,eyeY,6,0,Math.PI*2);ctx.arc(17,eyeY,6,0,Math.PI*2);ctx.fill();
+  }
+  /* mouth */
+  ctx.strokeStyle='#5b2438';ctx.fillStyle='#8b2348';ctx.lineWidth=4;ctx.lineCap='round';
+  if(expression==='happy'||expression==='victory'){
+    ctx.beginPath();ctx.arc(0,22,16,0,Math.PI);ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,31,8,0,Math.PI);ctx.fill();
+  }else if(expression==='sad'){
+    ctx.beginPath();ctx.arc(0,36,14,Math.PI,Math.PI*2);ctx.stroke();
+  }else if(expression==='surprised'){
+    ctx.beginPath();ctx.ellipse(0,28,9,12,0,0,Math.PI*2);ctx.fill();
+  }else if(expression==='focused'){
+    ctx.beginPath();ctx.moveTo(-9,31);ctx.lineTo(9,31);ctx.stroke();
+  }else{ctx.beginPath();ctx.arc(0,27,9,.1,Math.PI-.1);ctx.stroke();}
+  /* accessory */
+  if(S.outfit==='Pita Berry'){ctx.fillStyle='#ffd34f';ctx.beginPath();ctx.ellipse(0,-74,34,10,0,0,Math.PI*2);ctx.fill();ctx.fillRect(-8,-90,16,18);}
+  if(S.outfit==='Topi Kebun'){ctx.fillStyle='#e9c47a';ctx.beginPath();ctx.ellipse(0,-79,46,11,0,0,Math.PI*2);ctx.fill();ctx.fillRect(-25,-99,50,22);}
+  if(S.outfit==='Super Berry'){ctx.fillStyle='#4e8de8';ctx.beginPath();ctx.moveTo(-38,25);ctx.lineTo(-82,48);ctx.lineTo(-35,54);ctx.fill();ctx.fillStyle='#ffd54d';ctx.beginPath();ctx.arc(0,35,12,0,Math.PI*2);ctx.fill();}
+  if(S.outfit==='Rumah Stroberi'){ctx.strokeStyle='#9c5a4c';ctx.lineWidth=7;ctx.strokeRect(-43,38,86,40);}
+  if(S.outfit==='Tas Petualang'){ctx.fillStyle='#6d6a78';ctx.fillRect(-46,18,18,44);ctx.fillRect(28,18,18,44);}
+  if(expression==='victory'){ctx.fillStyle='#ffd54d';ctx.font='bold 22px system-ui';ctx.fillText('★',-8,-104);}
+  ctx.restore();
+};
+
+/* ---------- 3D-style Strawberry Maze exploration ---------- */
+function maze3DGame(index,title){
+  const W=960,H=540;
+  $('gameContent').innerHTML=`
+    <div class="game-hud">
+      <span class="tag">🌀 Maze Stroberi 3D</span><span class="tag">🍓 Pos: <b id="mzPost">0</b>/8</span>
+      <span class="tag">❤️ Nyawa: <b id="mzLives">3</b></span><span class="tag">🪙 Skor: <b id="mzScore">0</b></span>
+      <span class="tag">🧭 Jelajah: <b id="mzDist">0</b>%</span>
+    </div>
+    <div class="game-stage" style="position:relative;background:#173f35"><canvas id="gameCanvas" width="${W}" height="${H}" aria-label="Maze stroberi bergaya 3D"></canvas><div id="berryFaceBadge" class="berry-expression-badge">😊 Siap menjelajah!</div></div>
+    <div class="controls"><button class="ctrl" id="mzTurnL" aria-label="Putar kiri">↶</button><button class="ctrl" id="mzForward" aria-label="Maju">▲</button><button class="ctrl" id="mzBack" aria-label="Mundur">▼</button><button class="ctrl" id="mzTurnR" aria-label="Putar kanan">↷</button></div>
+    <div class="card" style="margin-top:8px;font-size:12px"><b>🎮 Kontrol:</b> W/S atau ↑/↓ bergerak, A/D atau ←/→ berputar. Jelajahi rute panjang, temukan 8 pos, jawab teka-teki stroberi, dan capai gerbang 🍓.</div>`;
+  const c=$('gameCanvas'),ctx=c.getContext('2d');
+  const cols=46, rows=17, grid=Array.from({length:rows},()=>Array(cols).fill('#'));
+  // Satu jalur utama yang panjang dengan cabang pendek agar terasa seperti area pertanian/alam.
+  for(let y=1;y<rows-1;y++) for(let x=1;x<cols-1;x++) grid[y][x]='.';
+  const verticalWalls=[4,8,12,16,20,24,28,32,36,40,44];
+  verticalWalls.forEach((x,i)=>{for(let y=1;y<rows-1;y++){if(y!==2+(i%5)*3 && y!==13-(i%4)*2) grid[y][x]='#';}});
+  // bukaan tambahan supaya rute tidak lurus sekali
+  [[2,5],[6,10],[10,4],[14,12],[18,6],[22,11],[26,3],[30,9],[34,5],[38,12],[42,7]].forEach(([x,y])=>grid[y][x]='.');
+  const start={x:2.5,y:2.5,a:0};
+  const exit={x:43.5,y:14.5};
+  const posts=[3.5,8.5,13.5,18.5,23.5,28.5,34.5,40.5].map((x,i)=>({x,y: i%2?12.5:2.5,hit:false,n:i}));
+  // Tempatkan pos di koridor dengan memastikan selnya kosong.
+  posts.forEach((p,i)=>{p.y=[2.5,12.5,2.5,12.5,2.5,12.5,2.5,12.5][i];grid[Math.floor(p.y)][Math.floor(p.x)]='.';});
+  const scenery=[];
+  // Vegetasi benar-benar ditanam di sepanjang tepi koridor maze, bukan hanya di sekitar titik awal.
+  // Posisi ini statis di dunia: pohon tidak mengikuti kamera dan tidak berpindah saat pemain berjalan.
+  const edgeKinds=['tree','tree','bush','flower','strawberry','grass','tree','bush'];
+  const edgeCells=[];
+  for(let y=1;y<rows-1;y++) for(let x=1;x<cols-1;x++){
+    if(grid[y][x]!=='.') continue;
+    const nearWall = grid[y-1][x]==='#' || grid[y+1][x]==='#' || grid[y][x-1]==='#' || grid[y][x+1]==='#';
+    if(nearWall) edgeCells.push({x:x+.5,y:y+.5});
+  }
+  for(let i=0;i<Math.min(78,edgeCells.length);i++){
+    const e=edgeCells[(i*7)%edgeCells.length];
+    // Geser sedikit menjauh dari jalur agar tanaman berada di pinggir.
+    const side=(i%2===0?1:-1);
+    const y=e.y + side*.28;
+    const x=e.x + (i%3===0?.18:-.18);
+    if(!wall(x,y)) scenery.push({x,y,kind:edgeKinds[i%edgeKinds.length],side,static:true});
+  }
+  // Hewan juga memiliki titik dunia tetap di pinggir koridor.
+  const animalKinds=['rabbit','butterfly','bird','squirrel','bee','hedgehog'];
+  for(let i=0;i<26 && edgeCells.length;i++){
+    const e=edgeCells[(i*11+3)%edgeCells.length];
+    const x=e.x+(i%2?-.38:.38), y=e.y+(i%3===0?.35:-.35);
+    if(!wall(x,y)) scenery.push({x,y,kind:animalKinds[i%animalKinds.length],side:i%2?1:-1,static:true});
+  }
+  const questions=[
+   ['Buah stroberi biasanya berwarna apa saat matang?',['Merah','Biru','Hitam','Ungu'],'Merah'],
+   ['Bagian hijau di atas buah stroberi disebut apa?',['Kelopak/daun mahkota','Akar','Batang kayu','Kulit tanah'],'Kelopak/daun mahkota'],
+   ['Stroberi membutuhkan apa untuk tumbuh?',['Air dan cahaya','Es batu saja','Kegelapan total','Pasir kering saja'],'Air dan cahaya'],
+   ['Mana yang merupakan buah stroberi?',['🍓','🍌','🥕','🥔'],'🍓'],
+   ['Apa yang sebaiknya dilakukan sebelum memakan stroberi?',['Mencucinya','Membakarnya','Membekukannya di tanah','Membuangnya'],'Mencucinya'],
+   ['Stroberi tumbuh dari tanaman yang termasuk?',['Tanaman','Batu','Logam','Awan'],'Tanaman'],
+   ['Jika ada 2 stroberi lalu mendapat 1 lagi, jumlahnya?',['3','2','1','4'],'3'],
+   ['Mana yang membantu kebun tetap sehat?',['Merawat dan menyiram','Menginjak tanaman','Membuang air','Menutup semua cahaya'],'Merawat dan menyiram'],
+   ['Biji kecil yang tampak di luar stroberi disebut?',['Achenes/biji buah','Batu','Tetes air','Daun'],'Achenes/biji buah'],
+   ['Stroberi dapat dipanen ketika buah sudah?',['Matang','Masih mentah sekali','Kering menjadi batu','Tidak ada buah'],'Matang']
+  ];
+  let lives=3,score=0,postCount=0,done=false,raf=null,move=0,turn=0;
+  let paused=false, quizOpen=false, cleaned=false, runToken=0;
+  const keys={f:false,b:false,l:false,r:false};
+  const FOV=Math.PI/3, depth=18;
+  function setExpr(e,t){S.expr=e;const b=$('berryFaceBadge');if(b)b.textContent=t;}
+  function wall(x,y){return x<0||y<0||x>=cols||y>=rows||grid[Math.floor(y)][Math.floor(x)]==='#';}
+  function canMove(x,y){const r=.22;return !wall(x-r,y-r)&&!wall(x+r,y-r)&&!wall(x-r,y+r)&&!wall(x+r,y+r);}
+  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+  function randomQ(){return questions[Math.floor(Math.random()*questions.length)];}
+  function showPost(post){
+    if(done||cleaned||quizOpen||post.hit)return;
+    post.hit=true;quizOpen=true;paused=true;
+    keys.f=keys.b=keys.l=keys.r=false;
+    postCount++;score+=35;
+    const livesEl=$('mzLives'),scoreEl=$('mzScore'),stage=document.querySelector('.game-stage');
+    if(livesEl)livesEl.textContent=lives;if(scoreEl)scoreEl.textContent=score;
+    setExpr('focused','🤔 Teka-teki Pos '+postCount);
+    if(!stage){quizOpen=false;paused=false;return;}
+    const q=randomQ(),wrap=document.createElement('div');
+    wrap.id='maze3dQuiz';
+    wrap.style.cssText='position:absolute;inset:0;background:rgba(15,37,29,.78);display:flex;align-items:center;justify-content:center;padding:18px;z-index:30';
+    const choices=q[1].slice().sort(()=>Math.random()-.5);
+    wrap.innerHTML='<div class="quiz" style="width:min(700px,96%);border-radius:24px;background:#fff9f0;padding:22px;text-align:center"><div style="font-size:46px">🍓🪧</div><b>POS '+postCount+' — TEKA-TEKI STROBERI</b><div class="question" style="font-size:20px;margin:14px 0">'+q[0]+'</div><div class="answers">'+choices.map(a=>'<button class="answer" data-a="'+String(a).replace(/"/g,'&quot;')+'">'+a+'</button>').join('')+'</div><p style="font-size:12px">Soal dipilih secara acak. Jawab untuk melanjutkan perjalanan.</p></div>';
+    stage.appendChild(wrap);
+    const answer=()=>{
+      if(done||cleaned||!quizOpen)return;
+      const correct=event.currentTarget?.dataset?.a===q[2];
+      if(correct){score+=60;setExpr('happy','😄 Benar! +60');toast('✅ Benar! Lanjut menjelajah.');}
+      else{score=Math.max(0,score-10);lives--;setExpr('surprised','😲 Salah');toast('❌ Jawaban kurang tepat. -1 nyawa');}
+      quizOpen=false;paused=false;keys.f=keys.b=keys.l=keys.r=false;
+      const w=$('maze3dQuiz');if(w)w.remove();
+      const le=$('mzLives'),se=$('mzScore');if(le)le.textContent=lives;if(se)se.textContent=score;
+      if(lives<=0){finish(false);return;}
+      setExpr(correct?'happy':'focused',correct?'😄 Lanjut!':'🧭 Coba lagi!');
+    };
+    wrap.querySelectorAll('.answer').forEach(b=>b.addEventListener('click',answer,{once:true}));
+  }
+  function finish(win){
+    if(done)return;
+    done=true;paused=true;quizOpen=false;
+    if(raf)cancelAnimationFrame(raf);raf=null;
+    window.removeEventListener('keydown',onKey);window.removeEventListener('keyup',offKey);
+    const q=$('maze3dQuiz');if(q)q.remove();
+    keys.f=keys.b=keys.l=keys.r=false;
+    activeCleanup=null;
+    if(win){S.coins+=90;gainXP(75);S.high=Math.max(S.high,score);setExpr('victory','🥳 Maze 3D selesai!');$('gameContent').innerHTML='<div class="game-over"><div class="big">🏆🍓🌳</div><h2>Maze Stroberi 3D selesai!</h2><p class="reward">8 pos ditemukan • Skor '+score+' • +90 Coin • +75 XP</p><p>Kamu berhasil menjelajahi rute panjang, bertemu hewan dan tumbuhan, serta menjawab teka-teki stroberi.</p><button class="primary" id="mazeBack">Kembali ke Map</button></div>';$('mazeBack').onclick=()=>{complete(index,0,0);closeGame();};}else{$('gameContent').innerHTML='<div class="game-over"><div class="big">😵🍓</div><h2>Petualangan berhenti</h2><p>Nyawa habis. Coba lagi dan jelajahi maze dari awal.</p><button class="primary" id="mazeRetry">Coba Lagi</button></div>';$('mazeRetry').onclick=()=>maze3DGame(index,title);}}
+  function drawPlant(kind,x,y,size,far){
+    ctx.save();ctx.translate(x,y);
+    // Pohon selalu opak. Jarak hanya mengubah ukuran, bukan transparansi.
+    ctx.globalAlpha=1;
+    const s=size;
+    if(kind==='tree'){
+      // Batang kokoh menyentuh tanah dan tajuk berlapis, sehingga pohon tampak diam di tempat.
+      ctx.fillStyle='#5b3a24';ctx.fillRect(-s*.075,-s*.02,s*.15,s*.62);
+      ctx.fillStyle='#75482b';ctx.fillRect(-s*.12,s*.38,s*.24,s*.16);
+      const g=ctx.createRadialGradient(-s*.18,-s*.52,s*.04,0,-s*.42,s*.66);g.addColorStop(0,'#86c96d');g.addColorStop(.55,'#4f963f');g.addColorStop(1,'#275d35');ctx.fillStyle=g;
+      [[-.34,-.43,.35],[.02,-.63,.38],[.35,-.43,.35],[-.02,-.25,.4]].forEach(([a,b,r])=>{ctx.beginPath();ctx.arc(a*s,b*s,r*s,0,Math.PI*2);ctx.fill();});
+      ctx.fillStyle='rgba(35,78,39,.45)';ctx.beginPath();ctx.ellipse(0,s*.53,s*.3,s*.07,0,0,Math.PI*2);ctx.fill();
+    } else if(kind==='bush'){
+      ctx.fillStyle='#2f713d';ctx.beginPath();ctx.ellipse(0,0,s*.55,s*.27,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#4e944d';for(let i=-2;i<=2;i++){ctx.beginPath();ctx.arc(i*s*.2,-s*.12-(i%2)*s*.04,s*.18,0,Math.PI*2);ctx.fill();}
+    } else if(kind==='flower'){
+      ctx.strokeStyle='#3c7b42';ctx.lineWidth=Math.max(2,s*.06);ctx.beginPath();ctx.moveTo(0,s*.18);ctx.lineTo(0,-s*.15);ctx.stroke();
+      ctx.fillStyle='#f2c94c';for(let i=0;i<6;i++){ctx.beginPath();ctx.ellipse(Math.cos(i*Math.PI/3)*s*.13,-s*.2+Math.sin(i*Math.PI/3)*s*.13,s*.1,s*.18,i*Math.PI/3,0,Math.PI*2);ctx.fill();}
+      ctx.fillStyle='#8a5638';ctx.beginPath();ctx.arc(0,-s*.2,s*.1,0,Math.PI*2);ctx.fill();
+    } else if(kind==='strawberry'){
+      ctx.fillStyle='#d94745';ctx.beginPath();ctx.moveTo(0,-s*.2);ctx.bezierCurveTo(-s*.32,-s*.05,-s*.27,s*.3,0,s*.43);ctx.bezierCurveTo(s*.27,s*.3,s*.32,-s*.05,0,-s*.2);ctx.fill();
+      ctx.fillStyle='#4b8c45';ctx.beginPath();ctx.moveTo(0,-s*.2);ctx.lineTo(-s*.18,-s*.38);ctx.lineTo(-s*.03,-s*.28);ctx.lineTo(s*.08,-s*.4);ctx.lineTo(s*.13,-s*.23);ctx.fill();
+      ctx.fillStyle='#f7e4aa';[[.1,.05],[-.12,.12],[.05,.25],[-.03,-.02]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(a*s,b*s,s*.025,0,Math.PI*2);ctx.fill();});
+    } else if(kind==='grass'){
+      ctx.strokeStyle='#4d8b49';ctx.lineWidth=Math.max(1,s*.045);for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(i*s*.09,s*.25);ctx.lineTo(i*s*.15,s*(-.08-Math.abs(i)*.015));ctx.stroke();}
+    }
+    ctx.restore();
+  }
+  function drawAnimal(kind,x,y,size,far){
+    ctx.save();ctx.translate(x,y);ctx.globalAlpha=Math.max(.42,1-far/13);const s=size;
+    if(kind==='rabbit'||kind==='squirrel'||kind==='hedgehog'){
+      ctx.fillStyle=kind==='hedgehog'?'#756b5c':'#c9b9a4';ctx.beginPath();ctx.ellipse(0,0,s*.48,s*.27,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(s*.4,-s*.08,s*.2,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s*.47,-s*.13,s*.045,0,Math.PI*2);ctx.fill();
+      if(kind==='rabbit'){ctx.fillStyle='#c9b9a4';ctx.fillRect(s*.32,-s*.43,s*.07,s*.28);ctx.fillRect(s*.43,-s*.43,s*.07,s*.28);}
+      if(kind==='hedgehog'){ctx.strokeStyle='#514b43';ctx.lineWidth=Math.max(1,s*.035);for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(i*s*.1,-s*.2);ctx.lineTo(i*s*.16,-s*.38);ctx.stroke();}}
+      ctx.fillStyle='#514b43';ctx.beginPath();ctx.arc(s*.56,-s*.03,s*.035,0,Math.PI*2);ctx.fill();
+    } else if(kind==='bird'){
+      ctx.strokeStyle='#40566b';ctx.lineWidth=Math.max(2,s*.07);ctx.beginPath();ctx.arc(0,0,s*.28,0,Math.PI);ctx.stroke();ctx.beginPath();ctx.moveTo(-s*.1,0);ctx.quadraticCurveTo(0,-s*.2,s*.1,0);ctx.stroke();ctx.fillStyle='#e6a43c';ctx.beginPath();ctx.moveTo(s*.27,0);ctx.lineTo(s*.48,s*.06);ctx.lineTo(s*.27,s*.12);ctx.fill();
+    } else if(kind==='butterfly'||kind==='bee'){
+      ctx.fillStyle=kind==='bee'?'#d8a92e':'#9b79c8';ctx.beginPath();ctx.ellipse(-s*.16,-s*.05,s*.18,s*.25,-.5,0,Math.PI*2);ctx.ellipse(s*.16,-s*.05,s*.18,s*.25,.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#514b43';ctx.fillRect(-s*.045,-s*.18,s*.09,s*.36);if(kind==='bee'){ctx.strokeStyle='#5b4630';ctx.lineWidth=s*.04;ctx.beginPath();ctx.moveTo(-s*.03,-s*.08);ctx.lineTo(s*.03,-s*.08);ctx.stroke();}
+    }
+    ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const sky=ctx.createLinearGradient(0,0,0,H*.58);sky.addColorStop(0,'#74c9ee');sky.addColorStop(.65,'#cfeef4');sky.addColorStop(1,'#e9e2c7');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+    // Horizon berkabut + pegunungan agar tidak terasa seperti dinding hijau datar.
+    ctx.fillStyle='#78906d';ctx.beginPath();ctx.moveTo(0,H*.48);for(let x=0;x<=W;x+=80)ctx.lineTo(x,H*.42+Math.sin(x*.012)*18);ctx.lineTo(W,H*.64);ctx.lineTo(0,H*.64);ctx.fill();
+    // Raycast dinding dengan gradasi dan garis tekstur batu/tanah.
+    const rays=300;
+    for(let i=0;i<rays;i++){
+      const a=start.a-FOV/2+FOV*i/rays;let d=0,hit=false;
+      while(d<depth&&!hit){d+=.035;const rx=start.x+Math.cos(a)*d,ry=start.y+Math.sin(a)*d;if(wall(rx,ry))hit=true;}
+      const corrected=d*Math.cos(a-start.a);const h=Math.min(H*1.2,H/(corrected+.01));const x=i*W/rays;
+      const shade=Math.max(28,178-corrected*8.2);const grad=ctx.createLinearGradient(0,H/2-h/2,0,H/2+h/2);grad.addColorStop(0,`rgb(${Math.round(shade*.42)},${Math.round(shade*.58)},${Math.round(shade*.36)})`);grad.addColorStop(.52,`rgb(${Math.round(shade*.32)},${Math.round(shade*.47)},${Math.round(shade*.30)})`);grad.addColorStop(1,`rgb(${Math.round(shade*.23)},${Math.round(shade*.34)},${Math.round(shade*.22)})`);ctx.fillStyle=grad;ctx.fillRect(x,H/2-h/2,W/rays+1,h);
+      if(i%13===0&&h>70){ctx.strokeStyle='rgba(210,225,190,.12)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,H/2-h*.2);ctx.lineTo(x+W/rays,H/2+h*.15);ctx.stroke();}
+    }
+    // Tanah jalan di bagian bawah layar.
+    const ground=ctx.createLinearGradient(0,H*.52,0,H);ground.addColorStop(0,'rgba(119,150,86,.18)');ground.addColorStop(1,'rgba(91,67,43,.62)');ctx.fillStyle=ground;ctx.fillRect(0,H*.52,W,H*.48);
+    // Tanaman dan hewan muncul di sisi kiri/kanan rute dengan perspektif.
+    const visible=scenery.map(o=>({...o,d:dist(o,start)})).filter(o=>o.d<13).sort((a,b)=>b.d-a.d);
+    visible.forEach(o=>{let ang=Math.atan2(o.y-start.y,o.x-start.x)-start.a;while(ang>Math.PI)ang-=Math.PI*2;while(ang<-Math.PI)ang+=Math.PI*2;if(Math.abs(ang)>FOV*.67)return;const d=o.d*Math.cos(ang);if(d<=.15)return;const sx=W/2+(ang/FOV)*W;const size=Math.min(150,250/(d+.15));const groundY=H*.78-Math.min(H*.22,d*7);const sy=groundY-size*.52;if(o.kind==='tree'||o.kind==='bush'||o.kind==='flower'||o.kind==='strawberry'||o.kind==='grass')drawPlant(o.kind,sx,sy,size,d);else drawAnimal(o.kind,sx,sy,size*.75,d);});
+    posts.filter(p=>!p.hit).forEach(p=>{const d=dist(p,start),ang=Math.atan2(p.y-start.y,p.x-start.x)-start.a;let aa=ang;while(aa>Math.PI)aa-=Math.PI*2;while(aa<-Math.PI)aa+=Math.PI*2;if(Math.abs(aa)<FOV*.55&&d<12){const sx=W/2+(aa/FOV)*W;const size=Math.min(92,135/(d+.3));ctx.font=Math.round(size)+'px sans-serif';ctx.textAlign='center';ctx.fillText('🪧',sx,H/2+size*.32);ctx.font='bold '+Math.max(12,Math.round(size*.18))+'px system-ui';ctx.fillStyle='#fff';ctx.fillText('POS '+(p.n+1),sx,H/2+size*.58);}});
+    const ed=dist(exit,start),ea=Math.atan2(exit.y-start.y,exit.x-start.x)-start.a;let eaa=ea;while(eaa>Math.PI)eaa-=Math.PI*2;while(eaa<-Math.PI)eaa+=Math.PI*2;if(Math.abs(eaa)<FOV*.58&&ed<15){const sx=W/2+(eaa/FOV)*W;ctx.font=Math.round(Math.min(115,165/(ed+.3)))+'px sans-serif';ctx.fillText('🍓',sx,H/2+48);}
+    ctx.strokeStyle='#ffffffcc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W/2-9,H/2);ctx.lineTo(W/2+9,H/2);ctx.moveTo(W/2,H/2-9);ctx.lineTo(W/2,H/2+9);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 14px system-ui';ctx.textAlign='left';ctx.fillText('Arah: '+Math.round((start.a*180/Math.PI+360)%360)+'°',16,24);
+  }
+  function update(){
+    if(cleaned||done)return;
+    if(quizOpen||paused){raf=requestAnimationFrame(update);return;}
+    const speed=.055; if(keys.f){const nx=start.x+Math.cos(start.a)*speed,ny=start.y+Math.sin(start.a)*speed;if(canMove(nx,ny)){start.x=nx;start.y=ny;move++;setExpr('focused','😎 Menjelajah');}}
+    if(keys.b){const nx=start.x-Math.cos(start.a)*speed,ny=start.y-Math.sin(start.a)*speed;if(canMove(nx,ny)){start.x=nx;start.y=ny;}}
+    if(keys.l)start.a-=.045;if(keys.r)start.a+=.045;
+    for(const post of posts){
+      if(!post.hit&&dist(post,start)<.62){showPost(post);break;}
+    }
+    if(!quizOpen&&dist(exit,start)<.75&&postCount>=posts.length){finish(true);return;}
+    const progress=Math.max(0,Math.min(100,Math.round(((start.x-2.5)+(start.y-2.5)*.35)/(41)*100)));
+    const de=$('mzDist'),se=$('mzScore'),le=$('mzLives');
+    if(de)de.textContent=progress;if(se)se.textContent=score;if(le)le.textContent=lives;
+    draw();raf=requestAnimationFrame(update);
+  }
+  function onKey(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')keys.f=true;if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')keys.b=true;if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.l=true;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.r=true;}
+  function offKey(e){if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')keys.f=false;if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')keys.b=false;if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.l=false;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.r=false;}
+  function bind(id,k){
+    const b=$(id);if(!b)return;
+    const down=e=>{e.preventDefault();if(!done&&!cleaned&&!quizOpen)keys[k]=true;};
+    const up=()=>{keys[k]=false;};
+    b.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,up));
+  }
+  window.addEventListener('keydown',onKey);window.addEventListener('keyup',offKey);
+  bind('mzForward','f');bind('mzBack','b');bind('mzTurnL','l');bind('mzTurnR','r');
+  activeCleanup=()=>{
+    if(cleaned)return;
+    cleaned=true;paused=true;quizOpen=false;runToken++;
+    keys.f=keys.b=keys.l=keys.r=false;
+    if(raf)cancelAnimationFrame(raf);raf=null;
+    window.removeEventListener('keydown',onKey);window.removeEventListener('keyup',offKey);
+    const q=$('maze3dQuiz');if(q)q.remove();
+    if($('berryFaceBadge'))$('berryFaceBadge').textContent='⏸️ Maze dihentikan';
+  };
+  setExpr('happy','😊 Siap menjelajah!');draw();raf=requestAnimationFrame(update);
+}
+
+/* ---------- More responsive, forgiving platform physics ---------- */
+window.platformGame=function(index,title,mode){
+  if(mode==='maze') return maze3DGame(index,title);
+
+  const isCount=mode==='count', W=1400,H=620,target=isCount?7:6;
+  $('gameContent').innerHTML=`
+  <div class="game-hud">
+   <span class="tag">🎯 ${isCount?'Kumpulkan '+target+' stroberi':'Kumpulkan 6 stroberi + bendera'}</span>
+   <span class="tag">❤️ Nyawa: <b id="gLives">3</b></span>
+   <span class="tag">🍓: <b id="gBerry">0</b>/${target}</span>
+   <span class="tag">🪙 Skor: <b id="gScore">0</b></span>
+   <span class="tag">🏁 Jarak: <b id="gDist">0</b>%</span>
+  </div>
+  <div class="game-stage" style="position:relative"><canvas id="gameCanvas" width="${W}" height="${H}" aria-label="Game platformer Berry Island"></canvas><div id="berryFaceBadge" class="berry-expression-badge">😊 Senang</div></div>
+  <div class="controls"><button class="ctrl" id="left" aria-label="Kiri">◀</button><button class="ctrl" id="jump" aria-label="Lompat">▲</button><button class="ctrl" id="right" aria-label="Kanan">▶</button></div>
+  <div class="card" style="margin-top:8px;font-size:12px"><b>🎮 Kontrol:</b> A/D atau ←/→ bergerak, W/↑/Space lompat. Lompat bisa sedikit terlambat dan tetap diterima, jadi terasa lebih natural. Kumpulkan stroberi, hindari hama, lalu ke bendera.</div>`;
+  const c=$('gameCanvas'),ctx=c.getContext('2d');
+  const keys={left:false,right:false};
+  const p={x:75,y:450,w:44,h:56,vx:0,vy:0,on:false,coyote:0,jumpBuffer:0,inv:0,spawnX:75,spawnY:450};
+  let lives=3,berries=0,score=0,frame=0,done=false,checkpointX=75,raf=null;
+  const platforms=[{x:0,y:540,w:1400,h:80},{x:160,y:430,w:190,h:24},{x:410,y:350,w:180,h:24},{x:660,y:455,w:180,h:24},{x:900,y:375,w:180,h:24},{x:1130,y:295,w:170,h:24}];
+  const spots=isCount?[[205,380],[455,300],[710,405],[945,325],[1180,245],[780,405],[1260,245]]:[[205,380],[455,300],[710,405],[945,325],[1180,245],[1260,245]];
+  const collectibles=spots.map((s,i)=>({x:s[0],y:s[1],r:17,taken:false,phase:i*.8}));
+  const enemies=[{x:300,y:492,w:42,h:42,vx:1.3,min:220,max:520},{x:510,y:302,w:42,h:42,vx:-1,min:430,max:570},{x:760,y:407,w:42,h:42,vx:1.4,min:680,max:810},{x:1010,y:327,w:42,h:42,vx:-1.2,min:915,max:1060}];
+  const flag={x:1280,y:235,w:34,h:60};
+  const particles=[];
+  function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
+  function burst(x,y,emoji='✨'){
+    for(let i=0;i<8;i++)particles.push({x,y,vx:(Math.random()-.5)*3,vy:(Math.random()-.8)*3,life:30,emoji});
+  }
+  function setExpr(expr,label){S.expr=expr;const b=$('berryFaceBadge');if(b)b.textContent=label;}
+  function respawn(){lives--;setExpr('surprised','😲 Kaget!');burst(p.x,p.y,'💥');if(lives<=0){finish(false);return;}p.x=checkpointX;p.y=p.spawnY;p.vx=0;p.vy=0;p.inv=110;}
+  function finish(win){if(done)return;done=true;cleanup();if(win){setExpr('victory','🥳 Menang!');const bonus=isCount?65:60;S.coins+=bonus;gainXP(55);S.high=Math.max(S.high,score);$('gameContent').innerHTML=`<div class="game-over"><div class="big">🏆🍓</div><h2>${title} selesai!</h2><p class="reward">Skor ${score} • ${berries}/${target} stroberi • +${bonus} Coin • +55 XP</p><p>Gerakan, lompatan, checkpoint, hama, dan ekspresi Berry berhasil dipakai.</p><button class="primary" id="continueBtn">Lanjutkan</button></div>`;$('continueBtn').onclick=()=>{complete(index,0,0);closeGame();};}else{S.expr='sad';$('gameContent').innerHTML=`<div class="game-over"><div class="big">😵🍓</div><h2>Berry jatuh!</h2><p>Coba lagi. Nyawa habis, tetapi poin dan progres lain tetap aman.</p><button class="primary" id="retryBtn">Coba Lagi</button></div>`;$('retryBtn').onclick=()=>platformGame(index,title,mode);}}
+  function draw(){
+    ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8fd7f2');sky.addColorStop(1,'#e8fbff');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(255,255,255,.7)';for(let x=70;x<W;x+=260){ctx.beginPath();ctx.arc(x,85+(x%4)*10,28,0,Math.PI*2);ctx.arc(x+34,82,34,0,Math.PI*2);ctx.fill();}
+    /* distant hills */ctx.fillStyle='#75bd72';ctx.beginPath();ctx.moveTo(0,450);ctx.quadraticCurveTo(260,300,520,450);ctx.quadraticCurveTo(800,280,1080,450);ctx.quadraticCurveTo(1250,350,1400,450);ctx.lineTo(1400,620);ctx.lineTo(0,620);ctx.fill();
+    platforms.forEach(q=>{ctx.fillStyle='#b98250';ctx.fillRect(q.x,q.y,q.w,q.h);ctx.fillStyle='#65a957';ctx.fillRect(q.x,q.y,q.w,8);});
+    collectibles.forEach(o=>{if(o.taken)return;ctx.save();ctx.translate(o.x,o.y+Math.sin(frame*.08+o.phase)*6);ctx.rotate(Math.sin(frame*.04+o.phase)*.08);ctx.font='34px sans-serif';ctx.textAlign='center';ctx.fillText('🍓',0,10);ctx.restore();});
+    enemies.forEach(e=>{ctx.font='38px sans-serif';ctx.fillText('🐛',e.x+21,e.y+31);});
+    ctx.fillStyle='#fff';ctx.fillRect(flag.x,flag.y,6,flag.h);ctx.font='42px sans-serif';ctx.fillText('🚩',flag.x+21,flag.y+31);
+    particles.forEach(q=>{ctx.globalAlpha=Math.max(0,q.life/30);ctx.font='20px sans-serif';ctx.fillText(q.emoji,q.x,q.y);});ctx.globalAlpha=1;
+    ctx.save();ctx.globalAlpha=p.inv>0&&Math.floor(p.inv/6)%2===0?.35:1;drawBerryCharacter(ctx,p.x+p.w/2,p.y+p.h/2-.5,.54,S.expr,true);ctx.restore();
+  }
+  function jump(){p.jumpBuffer=8;}
+  function update(){
+    frame++;p.jumpBuffer=Math.max(0,p.jumpBuffer-1);if(p.inv>0)p.inv--;
+    const accel=0.75,max=5.6,friction=.82;let dir=(keys.right?1:0)-(keys.left?1:0);
+    if(dir){p.vx+=dir*accel;p.vx=Math.max(-max,Math.min(max,p.vx));setExpr('focused','😤 Fokus!');}else{p.vx*=friction;if(Math.abs(p.vx)<.05)p.vx=0;}
+    const wasOn=p.on;p.vy+=.72;p.x+=p.vx;p.x=Math.max(0,Math.min(W-p.w,p.x));const oldY=p.y;p.y+=p.vy;p.on=false;
+    for(const q of platforms){if(p.x+p.w>q.x&&p.x<q.x+q.w&&oldY+p.h<=q.y&&p.y+p.h>=q.y&&p.vy>=0){p.y=q.y-p.h;p.vy=0;p.on=true;}}
+    if(p.on)p.coyote=7;else p.coyote=Math.max(0,p.coyote-1);
+    if(p.jumpBuffer>0&&p.coyote>0){p.vy=-13;p.on=false;p.coyote=0;p.jumpBuffer=0;setExpr('happy','😄 Lompat!');burst(p.x+p.w/2,p.y+p.h,'✨');}
+    if(!wasOn&&p.on){setExpr('happy','😊 Mendarat');}
+    if(p.y>H+80){respawn();return;}
+    enemies.forEach(e=>{e.x+=e.vx;if(e.x<e.min||e.x>e.max)e.vx*=-1;if(rectHit(p,e)&&p.inv<=0)respawn();});
+    collectibles.forEach(o=>{if(!o.taken&&Math.hypot(p.x+p.w/2-o.x,p.y+p.h/2-o.y)<40){o.taken=true;berries++;score+=100;setExpr('happy','😍 Dapat Stroberi!');burst(o.x,o.y,'🍓');toast('🍓 +100 skor!');}});
+    if(p.x>checkpointX+180){checkpointX=p.x;score+=25;setExpr('focused','😎 Checkpoint!');if(mode==='maze'&&!window.__berryMazeQuizActive){window.__berryMazeQuizActive=true;const qs=[['Bagian stroberi yang biasanya dimakan adalah?',['Akar','Buah','Batu','Daun'],'Buah'],['Stroberi tumbuh baik jika mendapat?',['Cahaya matahari','Kegelapan total','Air garam','Es batu'],'Cahaya matahari'],['Apa yang dilakukan agar tanaman tidak kekurangan air?',['Menyiram','Membakar','Membekukan','Menutup pasir'],'Menyiram']];const q=qs[Math.floor(Math.random()*qs.length)];const wrap=document.createElement('div');wrap.id='berryMiniQuiz';wrap.style.cssText='position:absolute;inset:0;background:#382b4899;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20';wrap.innerHTML='<div class="quiz" style="width:min(650px,96%);border-radius:22px;background:#fff9f0"><div style="font-size:42px">🍓📚</div><b>CHECKPOINT EDUKASI</b><div class="question">'+q[0]+'</div><div class="answers">'+q[1].sort(()=>Math.random()-.5).map(a=>'<button class="answer" data-a="'+a+'">'+a+'</button>').join('')+'</div></div>';document.querySelector('.game-stage').appendChild(wrap);wrap.querySelectorAll('.answer').forEach(b=>b.onclick=()=>{if(b.dataset.a===q[2]){setExpr('happy','😄 Benar!');toast('✅ Jawaban benar!');}else{setExpr('surprised','😲 Hampir!');toast('💡 Coba perhatikan soal berikutnya.');}wrap.remove();window.__berryMazeQuizActive=false;});}};
+    /* FINISH ZONE: jangan hanya cek satu titik bendera. Berry dianggap selesai
+       jika seluruh tubuhnya memasuki area finish, atau menyentuh area bendera
+       dari samping/atas. Ini mencegah finish gagal terdeteksi karena tinggi
+       karakter atau posisi tepat di ujung platform. */
+    const finishZone={x:flag.x-24,y:flag.y-30,w:105,h:125};
+    const finishHit=rectHit(p,finishZone);
+    if(berries>=target && (p.x>1100 || finishHit)) setExpr('focused','🏁 Cari Bendera!');
+    if(berries>=target && finishHit){
+      burst(flag.x+20,flag.y+35,'🏆');
+      finish(true);
+      return;
+    }
+    particles.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.08;q.life--;});while(particles.length&&particles[0].life<=0)particles.shift();
+    $('gLives').textContent=lives;$('gBerry').textContent=berries;$('gScore').textContent=score;$('gDist').textContent=Math.min(100,Math.round(p.x/(W-75)*100));draw();raf=requestAnimationFrame(update);
+  }
+  const onKey=e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' ','a','d','w','A','D','W'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=true;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=true;if(['ArrowUp','w','W',' '].includes(e.key))jump();};
+  const offKey=e=>{if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=false;if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=false;};
+  const bind=(id,k)=>{const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='jump')jump();else keys[k]=true;});['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>{if(k!=='jump')keys[k]=false;}));};
+  function cleanup(){window.removeEventListener('keydown',onKey);window.removeEventListener('keyup',offKey);if(raf)cancelAnimationFrame(raf);raf=null;window.__berryMazeQuizActive=false;}
+  window.addEventListener('keydown',onKey);window.addEventListener('keyup',offKey);bind('left','left');bind('right','right');bind('jump','jump');activeCleanup=cleanup;setExpr('happy','😊 Siap!');draw();raf=requestAnimationFrame(update);
+};
+
+/* Keep the home character expressive even when idle. */
+const oldDrawBerry=drawBerry;
+window.drawBerry=function(){const c=$('berryCanvas');if(!c)return;const x=c.getContext('2d');t+=.08;x.clearRect(0,0,190,220);drawBerryCharacter(x,95,115+Math.sin(t)*3,.82,S.expr||'happy',false);x.font='28px sans-serif';x.textAlign='center';if(S.expr==='happy')x.fillText('💖',160,70);if(S.expr==='sad')x.fillText('💧',160,70);if(S.expr==='surprised')x.fillText('❗',160,70);if(S.expr==='victory')x.fillText('✨',160,70);};
+
+})();
+</script>
+
+<style id="ice-kitchen-expressive-v6">#ice-kitchen{max-width:1100px;margin:auto}.ik-stage{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:14px}.ik-card{background:#fff;border:2px solid #f3c4d8;border-radius:20px;padding:14px;box-shadow:0 8px 22px #00000010}.ik-ingredient{cursor:grab;font-size:18px}.ik-ingredient:active{cursor:grabbing}.ik-drop{min-height:125px;border:3px dashed #b8a0d9;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px}.ik-drop.over{background:#f5efff;transform:scale(1.01)}.ik-topping{cursor:pointer}.ik-topping.selected{outline:4px solid #f59ec1;transform:translateY(-3px)}.ik-face{background:linear-gradient(180deg,#fff8fc,#ffeef5);border-radius:20px;padding:10px;text-align:center}.ik-face canvas{width:190px;height:190px;max-width:100%}@media(max-width:760px){.ik-stage{grid-template-columns:1fr}}</style><script id="ice-kitchen-expressive-v6">(function(){
+const ING=[['🍓','Stroberi'],['🥛','Susu'],['🍚','Gula'],['🥛','Krim']];const TOP=[['🍓','Berry'],['🍫','Cokelat'],['🌈','Sprinkle'],['🍪','Biskuit']];
+function face(ctx,x,y,scale,expr){ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.clearRect(-110,-115,220,230);ctx.fillStyle='#0001';ctx.beginPath();ctx.ellipse(0,91,55,12,0,0,Math.PI*2);ctx.fill();let g=ctx.createRadialGradient(-20,-28,5,8,12,70);g.addColorStop(0,'#ffb0c4');g.addColorStop(.5,'#f35a82');g.addColorStop(1,'#c72c57');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,10,66,76,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4e9b48';for(const a of [-.55,0,.55]){ctx.save();ctx.rotate(a);ctx.beginPath();ctx.ellipse(0,-68,22,11,0,0,Math.PI*2);ctx.fill();ctx.restore()}ctx.fillStyle='#fff2f5';ctx.beginPath();ctx.ellipse(-24,-3,15,20,0,0,Math.PI*2);ctx.ellipse(24,-3,15,20,0,0,Math.PI*2);ctx.fill();let blink=expr==='blink';ctx.fillStyle='#4b2630';if(!blink){ctx.beginPath();ctx.ellipse(-24,-2,6,10,0,0,Math.PI*2);ctx.ellipse(24,-2,6,10,0,0,Math.PI*2);ctx.fill()}else{ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-34,-3);ctx.quadraticCurveTo(-24,5,-14,-3);ctx.moveTo(14,-3);ctx.quadraticCurveTo(24,5,34,-3);ctx.stroke()}ctx.strokeStyle='#7f263e';ctx.lineWidth=4;ctx.lineCap='round';if(expr==='happy'||expr==='eating'||expr==='win'){ctx.beginPath();ctx.arc(0,25,20,0.15,Math.PI-0.15);ctx.stroke()}else if(expr==='surprised'){ctx.fillStyle='#7f263e';ctx.beginPath();ctx.ellipse(0,27,10,15,0,0,Math.PI*2);ctx.fill()}else if(expr==='sad'){ctx.beginPath();ctx.arc(0,48,19,Math.PI+0.15,2*Math.PI-0.15);ctx.stroke()}else{ctx.beginPath();ctx.moveTo(-13,31);ctx.lineTo(13,31);ctx.stroke()}ctx.fillStyle='#ff7898';ctx.globalAlpha=.5;ctx.beginPath();ctx.ellipse(-43,25,12,7,0,0,Math.PI*2);ctx.ellipse(43,25,12,7,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;if(expr==='win'){ctx.fillStyle='#ffd34e';ctx.font='26px sans-serif';ctx.fillText('★',-14,-86)}ctx.restore()}
+function setFace(expr,text){const c=document.querySelector('#ik-face-canvas');if(c){const q=c.getContext('2d');q.clearRect(0,0,c.width,c.height);face(q,95,92,1,expr)}const t=document.querySelector('#ik-face-text');if(t)t.textContent=text}
+window.iceCreamGame=function(i){let blend=[],doneBlend=false,cone=false,topping=null,dragBusy=false;const gc=$('gameContent');gc.innerHTML=`<div id="ice-kitchen"><div class="game-hud"><span class="tag">🍦 Dapur Es Krim</span><span class="tag">🎯 Racik → Blender → Cone → Topping → Makan</span></div><div class="ik-stage"><div class="ik-card"><h3>🥣 1. Ambil bahan</h3><p>Geser bahan ke blender. Boleh klik juga.</p><div id="ik-ings" style="display:flex;flex-wrap:wrap;gap:8px"></div></div><div class="ik-card"><h3>🌀 2. Blender</h3><div id="ik-blender" class="ik-drop">Taruh bahan di sini</div><button class="primary" id="ik-blend" disabled>🔄 Blender</button><div id="ik-cone" class="ik-drop" style="margin-top:12px;border-color:#f4a261">🍦 Cone kosong</div><button class="primary" id="ik-putcone" disabled>🍦 Masukkan ke Cone</button></div><div class="ik-card"><h3>✨ 3. Topping</h3><div id="ik-tops" style="display:flex;flex-wrap:wrap;gap:8px"></div><div class="ik-face" style="margin-top:12px"><canvas id="ik-face-canvas" width="190" height="190"></canvas><b id="ik-face-text">Berry siap memasak! 😊</b></div></div></div><div class="ik-card" style="margin-top:14px;text-align:center"><div id="ik-result" style="font-size:76px;min-height:90px">🍦</div><button class="primary" id="ik-eat" disabled>😋 Berikan Es Krim ke Berry</button><p id="ik-msg">Masukkan minimal 2 bahan ke blender.</p></div></div>`;
+const ings=$('ik-ings');ING.forEach((x,n)=>{const b=document.createElement('button');b.className='ik-ingredient';b.textContent=x[0]+' '+x[1];b.draggable=true;b.onclick=()=>add(n);b.ondragstart=e=>e.dataTransfer.setData('text/plain',n);ings.appendChild(b)});const bl=$('ik-blender');bl.ondragover=e=>{e.preventDefault();bl.classList.add('over')};bl.ondragleave=()=>bl.classList.remove('over');bl.ondrop=e=>{e.preventDefault();bl.classList.remove('over');add(+e.dataTransfer.getData('text/plain'))};TOP.forEach((x,n)=>{const b=document.createElement('button');b.className='ik-topping';b.textContent=x[0]+' '+x[1];b.onclick=()=>{if(!cone)return msg('Masukkan es krim ke cone dulu.');topping=n;document.querySelectorAll('.ik-topping').forEach(z=>z.classList.remove('selected'));b.classList.add('selected');msg('✨ '+x[1]+' dipilih! Berry senang 😍');setFace('happy','Berry suka topping ini! 😍');render()};$('ik-tops').appendChild(b)});$('ik-blend').onclick=()=>{doneBlend=true;msg('🌀 Blender selesai! Campuran lembut siap masuk cone.');setFace('surprised','Wah, jadi es krim! 😲');render()};$('ik-putcone').onclick=()=>{cone=true;msg('🍦 Es krim masuk cone. Pilih topping!');setFace('happy','Sekarang pilih topping! 😊');render()};$('ik-eat').onclick=()=>{setFace('eating','Nyam! Enak sekali! 😋');msg('🎉 Berry menghabiskan es krim! +30 poin');if(typeof window.berryAwardPoints==='function')window.berryAwardPoints(30,'Es Krim');if(typeof window.berryCharacterUse==='function')window.berryCharacterUse();setTimeout(()=>{complete(i,50,40)},700)};
+function add(n){if(doneBlend||blend.includes(n))return msg('Bahan itu sudah ada.');blend.push(n);msg('✅ '+ING[n][1]+' masuk blender.');setFace('focused','Berry sedang meracik... 😋');render()}function msg(t){$('ik-msg').textContent=t}function render(){$('ik-blender').innerHTML=blend.length?blend.map(n=>ING[n][0]).join(' '):'Taruh bahan di sini';$('ik-blend').disabled=blend.length<2||doneBlend;$('ik-putcone').disabled=!doneBlend||cone;$('ik-cone').innerHTML=cone?'🍦 Es krim siap dihias!':'🍦 Cone kosong';$('ik-result').textContent=cone?'🍦'+(topping===null?'':TOP[topping][0]):'🍦';$('ik-eat').disabled=!cone||topping===null}setFace('happy','Berry siap memasak! 😊');render()};
+window.addEventListener('load',()=>{if(typeof window.drawIsland==='function')setTimeout(window.drawIsland,100)});
+})();</script>
+<style id="puzzle-easy-v2-css">
+.easy-puzzle{max-width:900px;margin:auto}.ep-grid{display:grid;grid-template-columns:minmax(280px,460px) 250px;gap:20px;align-items:start}.ep-board{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;padding:8px;background:#f9d9e4;border-radius:18px}.ep-piece{aspect-ratio:1;border:3px solid #fff;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;position:relative}.ep-piece.selected{outline:5px solid #8b5cf6;transform:scale(.97)}.ep-piece.correct{box-shadow:inset 0 0 0 5px #62c66a}.ep-piece img{width:100%;height:100%;display:block}.ep-check{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:50%;background:#62c66a;color:#fff;font-weight:900;text-align:center;line-height:28px}.ep-help{padding:14px;border:2px solid #f5bfd0;border-radius:16px;background:#fff7fa}.ep-preview img{width:180px;height:180px;display:block;margin:8px auto}.ep-status{padding:12px;border-radius:14px;background:#fff;border:2px solid #eadfe5;font-weight:800;min-height:54px}.ep-actions{display:flex;gap:8px;flex-wrap:wrap}.ep-actions button{flex:1;min-width:110px}@media(max-width:700px){.ep-grid{grid-template-columns:1fr}}
+</style>
+<script id="puzzle-easy-v2-js">
+(function(){'use strict';
+window.puzzleGame=function(i){
+ const root=$('gameContent');
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="b" cx="35%" cy="25%"><stop stop-color="#ff91aa"/><stop offset=".58" stop-color="#ed3c6b"/><stop offset="1" stop-color="#b51649"/></radialGradient></defs><rect width="300" height="300" fill="#fff7fa"/><ellipse cx="150" cy="264" rx="80" ry="16" fill="#7d4960" opacity=".16"/><path d="M150 45C205 45 242 91 232 155c-9 60-42 97-82 108-40-11-73-48-82-108C58 91 95 45 150 45Z" fill="url(#b)"/><path d="M150 48c-8-23-30-28-48-11 18 0 30 10 48 23 18-13 30-23 48-23-18-17-40-12-48 11Z" fill="#4e9e46"/><path d="M150 40c-2-18-11-29-24-34 1 18 8 32 24 43 16-11 23-25 24-43-13 5-22 16-24 34Z" fill="#62b94e"/><g fill="#ffd99b">'+[...Array(14)].map((_,k)=>{const a=k*Math.PI*2/14,x=150+Math.cos(a)*55,y=150+Math.sin(a)*78;return '<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="4" ry="7" transform="rotate('+((a*180/Math.PI)+90).toFixed(1)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>';}).join('')+'</g><circle cx="120" cy="132" r="8" fill="#35152a"/><circle cx="180" cy="132" r="8" fill="#35152a"/><circle cx="117" cy="129" r="2.8" fill="#fff"/><circle cx="177" cy="129" r="2.8" fill="#fff"/><ellipse cx="104" cy="158" rx="15" ry="8" fill="#ff9db5" opacity=".7"/><ellipse cx="196" cy="158" rx="15" ry="8" fill="#ff9db5" opacity=".7"/><path d="M130 166Q150 184 170 166" fill="none" stroke="#651536" stroke-width="7" stroke-linecap="round"/></svg>';
+ const b64='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)));
+ let order=[0,1,2,3]; let selected=null, moves=0, solved=false;
+ // Easy shuffle: only two swaps from the completed picture.
+ [0,1,2,3].forEach((_,k)=>{const a=k%3,b=(k+1)%4;[order[a],order[b]]=[order[b],order[a]]});
+ if(order.every((v,k)=>v===k)) [order[0],order[1]]=[order[1],order[0]];
+ root.innerHTML='<div class="quiz easy-puzzle"><div class="sj-head"><div><h3>🧩 Susun Stroberi</h3><p>Susun <b>4 potongan besar</b> sampai gambarnya menjadi stroberi utuh. <b>Klik dua potongan</b> untuk menukar.</p></div><div class="sj-count" id="epMoves">Langkah: 0</div></div><div class="ep-grid"><div><div class="ep-board" id="epBoard"></div></div><div class="ep-help"><b>🎯 Contoh Stroberi</b><div class="ep-preview"><img src="'+b64+'"></div><div class="ep-status" id="epStatus">Klik satu potongan, lalu klik potongan lain untuk menukar.</div><div class="ep-actions" style="margin-top:10px"><button class="primary" id="epShuffle">🔀 Acak Mudah</button><button class="primary" id="epCheck">✅ Cek</button></div></div></div></div>';
+ const board=$('epBoard'),status=$('epStatus');
+ function draw(){board.innerHTML=order.map((piece,pos)=>{const x=piece%2,y=Math.floor(piece/2);const correct=piece===pos;return '<div class="ep-piece '+(selected===pos?'selected ':'')+(correct?'correct':'')+'" data-pos="'+pos+'"><img src="'+b64+'" style="object-fit:none;object-position:'+(x*100)+'% '+(y*100)+'%;width:200%;height:200%;margin-left:'+(-x*100)+'%;margin-top:'+(-y*100)+'%">'+(correct?'<span class="ep-check">✓</span>':'')+'</div>';}).join('');$('epMoves').textContent='Langkah: '+moves;board.querySelectorAll('.ep-piece').forEach(el=>el.onclick=()=>pick(+el.dataset.pos));}
+ function pick(pos){if(solved)return;if(selected===null){selected=pos;status.textContent='Potongan dipilih. Sekarang pilih potongan lain.';draw();return}if(selected===pos){selected=null;draw();return}[order[selected],order[pos]]=[order[pos],order[selected]];selected=null;moves++;draw();if(order.every((v,k)=>v===k))win();else status.textContent='Bagus! Teruskan, tinggal susun bagian yang belum cocok.';}
+ function win(){if(solved)return;solved=true;status.innerHTML='🎉 <b>Stroberi utuh!</b> +45 Coin & XP';S.expr='happy';if(typeof window.berryCharacterWin==='function')window.berryCharacterWin();complete(i,45,35);draw();}
+ $('epCheck').onclick=()=>{if(order.every((v,k)=>v===k))win();else{const good=order.filter((v,k)=>v===k).length;status.textContent='💡 '+good+'/4 sudah benar. Gunakan gambar contoh di kanan.';}};
+ $('epShuffle').onclick=()=>{if(solved)return;order=[0,1,2,3];[order[0],order[1]]=[order[1],order[0]];[order[2],order[3]]=[order[3],order[2]];moves=0;selected=null;status.textContent='🔀 Sudah diacak ringan. Mudah disusun!';draw();};
+ activeCleanup=()=>{};draw();
+};
+})();
+</script>
+
+<script id="strawberry-platform-preserve-v10">window.__originalPlatformGame=window.platformGame;</script>
+<style id="counting-strawberry-v7-css">
+.counting-game{padding:18px;background:linear-gradient(180deg,#fff7fb,#fff);border-radius:22px;color:#3b2340}.counting-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.counting-progress{font-weight:800;color:#b52e65}.counting-card{margin-top:14px;padding:20px;border:3px solid #ffc1d5;border-radius:22px;background:#fff;box-shadow:0 10px 25px #7d365d18;text-align:center}.berry-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;min-height:110px;margin:12px 0}.berry-big{font-size:52px;display:inline-block;animation:berryPop .35s ease}.count-number{font-size:48px;font-weight:900;color:#e83e83;margin:8px}.math-line{font-size:42px;font-weight:900;color:#4b2b53;margin:10px}.answer-grid{display:grid;grid-template-columns:repeat(3,minmax(90px,1fr));gap:12px;max-width:520px;margin:16px auto}.answer-btn{border:3px solid #f6a5bf;background:#fff;border-radius:18px;padding:15px;font-size:28px;font-weight:900;cursor:pointer;transition:.15s}.answer-btn:hover{transform:translateY(-2px);background:#fff0f5}.answer-btn.correct{background:#d9f7df;border-color:#4caf65}.answer-btn.wrong{background:#ffe0e5;border-color:#e85d75}.count-feedback{min-height:30px;font-weight:800;font-size:18px}.count-tip{font-size:14px;color:#765b70}.count-choices{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}.mini-berry{font-size:34px}@keyframes berryPop{from{transform:scale(.5);opacity:.2}to{transform:scale(1);opacity:1}}
+</style>
+<script id="counting-strawberry-v7-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  window.platformGame=function(index,title,mode){
+    if(mode!=='count'){
+      if(typeof window.__originalPlatformGame==='function') return window.__originalPlatformGame(index,title,mode);
+      return;
+    }
+    const root=$('gameContent'); let round=0,score=0,correct=0,locked=false,alive=true;
+    const total=8;
+    function berryGroup(n){return '<div class="berry-row">'+Array.from({length:n},(_,i)=>'<span class="berry-big" style="animation-delay:'+(i*.035)+'s">🍓</span>').join('')+'</div>';}
+    function makeChoices(answer){
+      // Jangan gunakan while acak di sini. Untuk jawaban 1, misalnya,
+      // rentang +/-1 hanya menghasilkan 1 dan 2 sehingga loop bisa
+      // tidak pernah selesai dan membuat browser terlihat hang/crash.
+      const set=new Set([answer]);
+      const candidates=[answer-2,answer-1,answer+1,answer+2,answer+3,answer+4]
+        .filter(n=>Number.isFinite(n)&&n>=1&&n<=12);
+      for(const n of candidates.sort(()=>Math.random()-.5)){
+        if(set.size>=3)break;
+        set.add(n);
+      }
+      // Jaga-jaga: selalu isi sampai 3 pilihan tanpa loop tak berujung.
+      for(let n=1;n<=12 && set.size<3;n++) set.add(n);
+      return [...set].sort(()=>Math.random()-.5);
+    }
+    function render(){
+      locked=false;
+      const learning=round<4;
+      let a,b,answer,question;
+      if(learning){
+        const n=round+1; answer=n; question='Ada berapa stroberi?';
+        root.innerHTML='<div class="counting-game"><div class="counting-head"><div><h2>🔢 Berhitung Stroberi</h2><p>Kenali angka dengan menghitung buah stroberi.</p></div><div class="counting-progress">Soal '+(round+1)+' / '+total+'</div></div><div class="counting-card"><h3>'+question+'</h3>'+berryGroup(n)+'<div class="count-number">🍓 = ?</div><p class="count-tip">Hitung stroberi satu per satu, lalu pilih angkanya.</p><div class="answer-grid">'+makeChoices(answer).map(x=>'<button class="answer-btn" data-a="'+x+'">'+x+'</button>').join('')+'</div><div class="count-feedback" id="countFeedback"></div></div></div>';
+      }else{
+        a=1+Math.floor(Math.random()*5); b=1+Math.floor(Math.random()*5); answer=a+b; question='Berapa jumlah semua stroberi?';
+        root.innerHTML='<div class="counting-game"><div class="counting-head"><div><h2>🍓➕🍓 Penjumlahan Stroberi</h2><p>Gabungkan dua kelompok stroberi dan hitung semuanya.</p></div><div class="counting-progress">Soal '+(round+1)+' / '+total+'</div></div><div class="counting-card"><h3>'+question+'</h3><div class="math-line">'+a+' + '+b+' = ?</div><div class="berry-row">'+berryGroup(a)+'<div style="font-size:38px;font-weight:900">＋</div>'+berryGroup(b)+'</div><p class="count-tip">Hitung semua stroberi dari kiri ke kanan.</p><div class="answer-grid">'+makeChoices(answer).map(x=>'<button class="answer-btn" data-a="'+x+'">'+x+'</button>').join('')+'</div><div class="count-feedback" id="countFeedback"></div></div></div>';
+      }
+      root.querySelectorAll('.answer-btn').forEach(btn=>btn.onclick=()=>choose(+btn.dataset.a,answer));
+    }
+    function choose(value,answer){
+      if(locked)return; const fb=$('countFeedback');
+      if(value===answer){locked=true;correct++;score+=10;fb.textContent='🎉 Benar! Hebat, kamu menemukan angka '+answer+'!';fb.style.color='#2d8a4a';S.expr='happy';if(typeof window.berryCharacterWin==='function')window.berryCharacterWin();
+        root.querySelectorAll('.answer-btn').forEach(b=>{if(+b.dataset.a===answer)b.classList.add('correct')});
+        setTimeout(()=>{if(!alive||!document.getElementById('modal')?.classList.contains('show'))return; round++; if(round<total)render();else finish();},650);
+      }else{score=Math.max(0,score-1);fb.textContent='💡 Coba lagi. Hitung stroberinya pelan-pelan!';fb.style.color='#c94b63';S.expr='surprised';root.querySelectorAll('.answer-btn').forEach(b=>{if(+b.dataset.a===value)b.classList.add('wrong')});setTimeout(()=>{if(!alive)return;root.querySelectorAll('.answer-btn').forEach(b=>b.classList.remove('wrong'))},350)}
+    }
+    function finish(){
+      const bonus=30+correct*3; root.innerHTML='<div class="game-over"><div class="big">🍓🔢🎉</div><h2>Berhitung selesai!</h2><p>Kamu benar <b>'+correct+' dari '+total+'</b> soal.</p><p class="reward">Skor '+score+' • +'+bonus+' Coin • +50 XP</p><p>Hebat! Sekarang kamu sudah mengenal angka dan penjumlahan dengan stroberi.</p><button class="primary" id="countBack">Kembali ke Map</button></div>';
+      complete(index,50,bonus); $('countBack').onclick=()=>{closeGame();show('map',document.querySelector('.nav:nth-child(4)'));drawIsland();render()};
+    }
+    activeCleanup=()=>{alive=false};
+    render();
+  };
+})();
+</script>
+
+
+<style id="performance-v9">
+/* Performance: keep the home screen responsive without changing gameplay. */
+canvas{image-rendering:auto;}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+<script id="performance-v9-js">
+(function(){
+  // Stop the decorative home animation when the tab is hidden.
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){
+      if(window.__berryHomeTimer){clearInterval(window.__berryHomeTimer);window.__berryHomeTimer=null;}
+    }else if(!window.__berryHomeTimer && window.drawBerry){
+      window.__berryHomeTimer=setInterval(function(){try{window.drawBerry();}catch(e){}},180);
+    }
+  });
+})();
+</script>
+<script id="strawberry-stability-v10-js">
+(function(){
+  'use strict';
+  // Prevent stale game callbacks from touching a newly opened game.
+  let session=0;
+  const originalStartAdventure=window.startAdventure;
+  if(typeof originalStartAdventure==='function'){
+    window.startAdventure=function(i){
+      session++;
+      if(typeof activeCleanup==='function'){try{activeCleanup()}catch(e){}}
+      activeCleanup=null;
+      if(typeof gameRAF!=='undefined' && gameRAF){cancelAnimationFrame(gameRAF);gameRAF=null;}
+      return originalStartAdventure(i);
+    };
+  }
+  const originalCloseGame=window.closeGame;
+  if(typeof originalCloseGame==='function'){
+    window.closeGame=function(){
+      session++;
+      try{if(typeof activeCleanup==='function')activeCleanup()}catch(e){}
+      activeCleanup=null;
+      if(typeof gameRAF!=='undefined' && gameRAF){cancelAnimationFrame(gameRAF);gameRAF=null;}
+      return originalCloseGame();
+    };
+  }
+  // If the last counting-game override is active, its non-count modes must
+  // delegate to the preserved playable platformer instead of doing nothing.
+  const countOverride=window.platformGame;
+  if(typeof window.__originalPlatformGame==='function' && countOverride!==window.__originalPlatformGame){
+    window.platformGame=function(index,title,mode){
+      if(mode==='count') return countOverride(index,title,mode);
+      return window.__originalPlatformGame(index,title,mode);
+    };
+  }
+  // Never allow two animation loops to remain attached to the same canvas.
+  window.addEventListener('pagehide',function(){
+    try{if(typeof activeCleanup==='function')activeCleanup()}catch(e){}
+    if(typeof gameRAF!=='undefined' && gameRAF)cancelAnimationFrame(gameRAF);
+    gameRAF=null;
+  });
+})();
+</script>
+<!-- Strawberry World v13: fixed counting choices infinite-loop bug -->
+</body>
+</html>
